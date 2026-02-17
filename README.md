@@ -209,45 +209,36 @@ Enhance user engagement and introduce business-oriented capabilities for scalabi
 
 Contributions are welcome and appreciated. To maintain code quality and consistency, please follow the steps below:
 
-1. **Fork the Repository**
-
+1. **Fork the Repository**  
     Click the Fork button on GitHub to create your own copy of the repository.
 
-2. **Clone Your Fork**
-
+2. **Clone Your Fork**  
     ```bash
     git clone https://github.com/your-username/officecare.git
     cd officecare
     ```
 
-3. **Create a Feature Branch**
-
+3. **Create a Feature Branch**  
     Always create a new branch from main for your feature or fix:
-
     ```bash
     git checkout -b feature/your-feature-name
     ```
 
-4. **Make Your Changes**
-
+4. **Make Your Changes**  
     Follow the existing project structure and coding conventions.
 
-5. **Commit Your Changes**
-
+5. **Commit Your Changes**  
     Write meaningful commit messages:
-
     ```bash
     git commit -m "Add product review API endpoint"
     ```
 
-6. **Push to Your Branch**
-
+6. **Push to Your Branch**  
     ```bash
     git push origin feature/your-feature-name
     ```
 
-7. **Open a Pull Request**
-
+7. **Open a Pull Request**  
     Go to the original repository and open a Pull Request.  
     Provide a clear description of:  
     - What you implemented
