@@ -1,6 +1,6 @@
 import User from '../models/user.js'
 import bcrypt from "bcrypt"
-// import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 const saltRounds = 10
 
 export const registerNewUser = async (req, res) => {

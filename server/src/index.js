@@ -3,6 +3,9 @@ import connect from './db/connect.js'
 import cors from 'cors'
 import userRouter from './routes/user.js'
 
+import dotenv from "dotenv";
+dotenv.config();
+
 // const express = require('express');
 const app = express();
 const port = process.env.PORT || 5000; // default port if env not set
