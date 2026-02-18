@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -16,41 +17,36 @@ const page = () => {
 
     return (
         <div className="flex flex-col h-screen w-screen bg-gradient-to-br from-blue-500 to-purple-500 justify-center items-center">
-            <div className="flex flex-col gap-8 bg-black/30 backdrop-blur-xl p-12 rounded-2xl shadow-2xl justify-center items-center">
+            <div className="flex flex-col gap-10 bg-black/30 backdrop-blur-md p-12 rounded-2xl shadow-2xl justify-center items-center">
+                {/* Logo */}
+                <Image
+                    src="/OfficeCareLogo.png"
+                    alt="OfficeCare Logo"
+                    width={180}
+                    height={180}
+                    loading="eager"
+                />
 
-                {/* Logo with hover scale effect */}
-                <div className="transform transition-transform duration-500 hover:scale-110">
-                    <Image
-                        src="/OfficeCareLogo.png"
-                        alt="OfficeCare Logo"
-                        width={170}
-                        height={200}
-                        loading="eager"
-                    />
-                </div>
+                {/* Heading */}
+                <p className="flex flex-col gap-2 items-center font-bold font-sans text-4xl text-blue-400">
+                    WELCOME TO OFFICE CARE
+                </p>
 
-                {/* Heading with gradient text */}
-                <div className="flex flex-col gap-2 items-center font-extrabold text-4xl text-blue-500">
-                    <p>WELCOME</p>
-                    <p>TO</p>
-                    <p>OFFICE CARE</p>
-                </div>
-
-                {/* Buttons with hover animation */}
-                <div className="flex gap-6 mt-8">
-                    <button
+                {/* Buttons */}
+                <div className="flex gap-6">
+                    <Button
                         onClick={routeToSignin}
-                        className="bg-green-500 hover:bg-green-600 transform hover:scale-105 transition-all duration-300 text-white"
+                        className="bg-green-500 hover:bg-green-600 text-white"
                     >
                         Sign In
-                    </button>
+                    </Button>
 
-                    <button
+                    <Button
                         onClick={routeToRegister}
-                        className="bg-blue-500 hover:bg-blue-600 transform hover:scale-105 transition-all duration-300 text-white"
+                        className="bg-blue-500 hover:bg-blue-600 text-white"
                     >
                         Register
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>
