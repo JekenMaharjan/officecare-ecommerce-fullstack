@@ -9,8 +9,8 @@ const SignIn = () => {
         <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-500 to-purple-500 p-4">
             <Card className="w-full max-w-sm shadow-2xl">
                 <CardHeader className="text-center">
-                    <CardTitle>
-                        Sign In to your account
+                    <CardTitle className="text-xl">
+                        Sign In to your Account
                     </CardTitle>
                     <CardDescription>
                         Enter your credentials to Sign In
