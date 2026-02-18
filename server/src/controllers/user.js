@@ -24,7 +24,7 @@ export const registerNewUser = async (req, res) => {
         console.error("Registration error:", error);
         return res.status(500).send('Registration failed. Please try again later.');
     }
-}
+};
 
 export const signinUser = async (req, res) => {
     try {
@@ -53,4 +53,4 @@ export const signinUser = async (req, res) => {
         console.error("SignIn error:", error)
         return res.status(500).json({ message: 'SignIn failed. Try again later.' })
     }
-}
+};
