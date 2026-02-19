@@ -28,6 +28,7 @@ import { FaCircleXmark } from "react-icons/fa6";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Field, FieldGroup } from "@/components/ui/field";
+import { useRouter } from "next/navigation";
 
 type Product = {
     _id: string;
@@ -38,6 +39,8 @@ type Product = {
 }
 
 const AdminProducts = () => {
+    const router = useRouter();
+
     const [products, setProducts] = useState<Product[]>([]);
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
@@ -97,7 +100,6 @@ const AdminProducts = () => {
             toast.error("Something went wrong");
         }
     };
-
 
     return (
         <div className="min-h-full w-full bg-gray-100/50 py-12 px-6 rounded-md">
@@ -189,7 +191,7 @@ const AdminProducts = () => {
 
                 <div>
                     <Table>
-                        <TableCaption>A list of available products.</TableCaption>
+                        {/* <TableCaption>A list of available products.</TableCaption> */}
                         <TableHeader>
                             <TableRow>
                                 <TableHead className="w-[100px]">
@@ -244,6 +246,7 @@ const AdminProducts = () => {
 
                                     <TableCell className="flex justify-center gap-5">
                                         <Button
+                                            onClick={() => router.push(`/admin/products/${product._id}`)}
                                             className="bg-blue-500 hover:bg-blue-600"
                                         >
                                             Update

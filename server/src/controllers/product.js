@@ -1,10 +1,10 @@
 import Product from '../models/product.js';
 
+// Get all products
 export const getAllProducts = async (req, res) => {
     try {
         const products = await Product.find();
 
-        // Optional: convert file path to URL so frontend can display image easily
         const productsWithUrls = products.map(product => {
             return {
                 _id: product._id,
@@ -23,6 +23,33 @@ export const getAllProducts = async (req, res) => {
     }
 };
 
+// Get product by ID
+export const getProductById = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const product = await Product.findById(id);
+
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        res.status(200).json({
+            _id: product._id,
+            name: product.name,
+            description: product.description,
+            price: product.price,
+            image: product.image ? `/uploads/${product.image.split("\\").pop()}` : null,
+            createdAt: product.createdAt,
+            updatedAt: product.updatedAt,
+        });
+
+    } catch (error) {
+        res.status(500).json({ message: "Server error" });
+    }
+};
+
+// Create product
 export const createProduct = async (req, res) => {
     try {
         const { name, description, price } = req.body;
@@ -55,6 +82,7 @@ export const createProduct = async (req, res) => {
     }
 };
 
+// Delete selected product
 export const deleteProduct = async (req, res) => {
     try {
         const { id } = req.params;
@@ -75,5 +103,23 @@ export const deleteProduct = async (req, res) => {
         res.status(500).json({
             message: "Server error",
         });
+    }
+};
+
+// Update selected product
+export const updateProduct = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, description, price } = req.body;
+        const updateData = { name, description, price };
+
+        if (req.file) {
+            updateData.image = req.file.path;
+        }
+
+        const product = await Product.findByIdAndUpdate(id, updateData, { new: true });
+        res.json(product);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 };

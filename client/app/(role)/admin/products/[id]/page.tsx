@@ -1,0 +1,152 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import axios from "axios";
+import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+
+type Product = {
+    _id: string;
+    name: string;
+    description: string;
+    price: number;
+    image: string;
+};
+
+const UpdateProductPage = () => {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const id = searchParams.get("id");
+
+    const [product, setProduct] = useState<Product | null>(null);
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [price, setPrice] = useState("");
+    const [image, setImage] = useState<File | null>(null);
+    
+    useEffect(() => {
+        if (!id) return;
+        getProduct();
+    }, [id]);
+
+
+    const getProduct = async () => {
+        try {
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`);
+
+            setProduct(data);
+            setName(data.name);
+            setDescription(data.description);
+            setPrice(String(data.price));
+
+        } catch (error) {
+            toast.error("Product not found");
+        }
+    };
+
+
+    const updateProduct = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!id) return;
+
+        try {
+            const formData = new FormData();
+            formData.append("name", name);
+            formData.append("description", description);
+            formData.append("price", price);
+            if (image) formData.append("image", image);
+
+            await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`, formData);
+
+            toast.success("Product updated successfully!");
+            router.push("/admin/products");
+        } catch (error: any) {
+            toast.error("Failed to update product");
+        }
+    };
+
+    // if (!product) return <p className="text-center mt-10">Loading product...</p>;
+
+    return (
+        <div className="min-h-full w-full bg-gray-100/50 py-12 px-6 rounded-md">
+            <div className="flex flex-col md:flex-row justify-evenly gap-6">
+                {/* Product Details Card */}
+                <Card className="flex-1">
+                    <CardHeader>
+                        <CardTitle className="text-xl">Product Details</CardTitle>
+                        <CardDescription>Check product details here!</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex flex-col gap-4">
+                        {product?.image && (
+                            <img
+                                src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}`}
+                                alt={product.name}
+                                className="w-full h-64 object-cover rounded-md"
+                            />
+                        )}
+                        <p><strong>Name:</strong> {product?.name}</p>
+                        <p><strong>Description:</strong> {product?.description}</p>
+                        <p><strong>Price:</strong> Rs. {product?.price}</p>
+                    </CardContent>
+                </Card>
+
+                {/* Update Product Card */}
+                <Card className="flex-1">
+                    <CardHeader>
+                        <CardTitle className="text-xl">Update Product</CardTitle>
+                        <CardDescription>Update product here!</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={updateProduct} className="flex flex-col gap-4">
+                            <Input
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                placeholder="Product Name"
+                                required
+                            />
+                            <Input
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                placeholder="Description"
+                                required
+                            />
+                            <Input
+                                type="number"
+                                value={price}
+                                onChange={(e) => setPrice(e.target.value)}
+                                placeholder="Price"
+                                required
+                            />
+                            <Input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => setImage(e.target.files?.[0] || null)}
+                            />
+                            {image && (
+                                <img
+                                    src={URL.createObjectURL(image)}
+                                    alt="New Preview"
+                                    className="w-full h-64 object-cover rounded-md mt-2"
+                                />
+                            )}
+                            <Button type="submit" className="bg-green-500 hover:bg-green-600">
+                                Update
+                            </Button>
+                        </form>
+                    </CardContent>
+                </Card>
+            </div>
+        </div>
+    );
+};
+
+export default UpdateProductPage;
