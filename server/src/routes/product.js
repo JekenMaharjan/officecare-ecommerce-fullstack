@@ -2,7 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import { createProduct, getAllProducts } from '../controllers/product.js';
+import { createProduct, deleteProduct, getAllProducts } from '../controllers/product.js';
 
 const productRouter = express.Router();
 
@@ -32,5 +32,8 @@ productRouter.post('/products', upload.single('image'), createProduct);
 
 // GET: Fetch all products
 productRouter.get('/products', getAllProducts);
+
+// DELETE: Delete selected product
+productRouter.delete('/products/:id', deleteProduct);
 
 export default productRouter;

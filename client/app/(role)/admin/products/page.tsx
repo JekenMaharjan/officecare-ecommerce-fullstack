@@ -30,7 +30,7 @@ import { Input } from "@/components/ui/input";
 import { Field, FieldGroup } from "@/components/ui/field";
 
 type Product = {
-    _id: number;
+    _id: string;
     name: string;
     description: string;
     price: number;
@@ -43,7 +43,7 @@ const AdminProducts = () => {
     const [description, setDescription] = useState("");
     const [price, setPrice] = useState("");
     const [image, setImage] = useState<File | null>(null);
-
+    const [open, setOpen] = useState(false);
 
     useEffect(() => {
         getAllProducts();
@@ -81,8 +81,20 @@ const AdminProducts = () => {
             setDescription("");
             setPrice("");
             setImage(null);
+
+            setOpen(false);
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Something went wrong");
+        }
+    };
+
+    const handleDelete = async (id: string) => {
+        try {
+            await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`);
+            toast.success("Product deleted!");
+            getAllProducts();
+        } catch (error: any) {
+            toast.error("Something went wrong");
         }
     };
 
@@ -95,7 +107,7 @@ const AdminProducts = () => {
                 </h1>
 
                 <div className="flex justify-end mb-5">
-                    <Dialog>
+                    <Dialog open={open} onOpenChange={setOpen}>
                         <DialogTrigger asChild>
                             <Button
                                 className="bg-green-500 border-none text-white hover:text-white hover:bg-green-600" variant="outline">
@@ -237,6 +249,7 @@ const AdminProducts = () => {
                                             Update
                                         </Button>
                                         <Button
+                                            onClick={() => handleDelete(product._id)}
                                             className="bg-red-500 hover:bg-red-600"
                                         >
                                             Delete

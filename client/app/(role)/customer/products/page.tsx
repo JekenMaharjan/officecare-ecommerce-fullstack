@@ -37,42 +37,46 @@ const CustomerProducts = () => {
                     Our Products
                 </h1>
 
-                <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                    {products.map((product) => (
-                        <Card
-                            key={product._id}
-                            className="flex flex-col gap-0 group overflow-hidden p-0 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300"
-                        >
-                            <div className="relative w-full h-52 overflow-hidden">
-                                <Image
-                                    src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}`}
-                                    alt={product.name}
-                                    fill
-                                    unoptimized
-                                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                                />
-                            </div>
+                {products && products.length > 0 ? (
+                        <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                            {products.map((product) => (
+                                <Card
+                                    key={product._id}
+                                    className="flex flex-col gap-0 group overflow-hidden p-0 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300"
+                                >
+                                    <div className="relative w-full h-52 overflow-hidden">
+                                        <Image
+                                            src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}`}
+                                            alt={product.name}
+                                            fill
+                                            unoptimized
+                                            className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                        />
+                                    </div>
 
-                            <CardContent className="p-4 text-center">
-                                <CardTitle className="text-xl font-semibold mb-2">
-                                    {product.name}
-                                </CardTitle>
+                                    <CardContent className="p-4 text-center">
+                                        <CardTitle className="text-xl font-semibold mb-2">
+                                            {product.name}
+                                        </CardTitle>
 
-                                <CardDescription className="text-sm text-gray-600 line-clamp-2">
-                                    {product.description}
-                                </CardDescription>
+                                        <CardDescription className="text-sm text-gray-600 line-clamp-2">
+                                            {product.description}
+                                        </CardDescription>
 
-                                <p className="mt-3 font-bold text-lg text-blue-600">
-                                    Rs. {product.price}
-                                </p>
+                                        <p className="mt-3 font-bold text-lg text-blue-600">
+                                            Rs. {product.price}
+                                        </p>
 
-                                <button className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
-                                    Add to Cart
-                                </button>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
+                                        <button className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
+                                            Add to Cart
+                                        </button>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
+                    ) : (
+                    <p className="text-sm text-center mt-10">No Products...</p>
+                )}
             </div>
         </div>
     );
