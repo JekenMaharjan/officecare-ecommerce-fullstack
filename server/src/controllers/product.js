@@ -27,17 +27,30 @@ export const createProduct = async (req, res) => {
     try {
         const { name, description, price } = req.body;
 
-        if (!req.file) {
-            return res.status(400).json({ error: 'Image file is required' });
+        // Basic validation
+        if (!name || !description || !price) {
+            return res.status(400).json({ message: "All fields are required" });
         }
 
-        const image = req.file.path; // path of uploaded image
+        if (!req.file) {
+            return res.status(400).json({ message: "Product image is required" });
+        }
 
-        const product = new Product({ name, description, price, image });
-        await product.save();
+        const product = await Product.create({
+            name,
+            description,
+            price,
+            image: req.file.path,
+        });
 
-        res.status(201).json({ message: 'Product created', product });
+        res.status(201).json({
+            message: "Product created successfully",
+            product,
+        });
+
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({
+            message: "Server error",
+        });
     }
 };
