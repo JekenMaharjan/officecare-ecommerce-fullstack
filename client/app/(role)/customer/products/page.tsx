@@ -14,7 +14,7 @@ type Product = {
     image: string;
 }
 
-const Products = () => {
+const CustomerProducts = () => {
     const [products, setProducts] = useState<Product[]>([]);
 
     const getAllProducts = async () => {
@@ -41,7 +41,7 @@ const Products = () => {
                     {products.map((product) => (
                         <Card
                             key={product._id}
-                            className="group overflow-hidden rounded-2xl shadow-md hover:shadow-xl transition-all duration-300"
+                            className="flex flex-col gap-0 group overflow-hidden p-0 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300"
                         >
                             <div className="relative w-full h-52 overflow-hidden">
                                 <Image
@@ -54,7 +54,7 @@ const Products = () => {
                             </div>
 
                             <CardContent className="p-4 text-center">
-                                <CardTitle className="text-lg font-semibold mb-2">
+                                <CardTitle className="text-xl font-semibold mb-2">
                                     {product.name}
                                 </CardTitle>
 
@@ -78,4 +78,4 @@ const Products = () => {
     );
 };
 
-export default Products;
+export default CustomerProducts;

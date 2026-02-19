@@ -18,6 +18,12 @@ export default function Navbar() {
                 >
                     Products
                 </Link>
+                <Link
+                    className="font-semibold text-lg"
+                    href="/customer/products"
+                >
+                    Cart
+                </Link>
                 <Avatar>
                     <AvatarImage src="https://github.com/shadcn.png"/>
                     <AvatarFallback>CN</AvatarFallback>
