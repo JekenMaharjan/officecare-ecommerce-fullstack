@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,8 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import Image from "next/image";
+import { Label } from "@/components/ui/label";
 
 type Product = {
     _id: string;
@@ -24,8 +26,10 @@ type Product = {
 
 const UpdateProductPage = () => {
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const id = searchParams.get("id");
+
+    // This reads the dynamic part of your URL
+    const params = useParams();
+    const id = params.id as string; // Take the id value from the URL and treat it as a string
 
     const [product, setProduct] = useState<Product | null>(null);
     const [name, setName] = useState("");
@@ -87,10 +91,12 @@ const UpdateProductPage = () => {
                     </CardHeader>
                     <CardContent className="flex flex-col gap-4">
                         {product?.image && (
-                            <img
+                            <Image
                                 src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}`}
                                 alt={product.name}
-                                className="w-full h-64 object-cover rounded-md"
+                                height={200}
+                                width={200}
+                                unoptimized
                             />
                         )}
                         <p><strong>Name:</strong> {product?.name}</p>
@@ -107,27 +113,42 @@ const UpdateProductPage = () => {
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={updateProduct} className="flex flex-col gap-4">
+                            <Label htmlFor="productName">Product Name</Label>
                             <Input
                                 value={name}
+                                id="productName" 
+                                name="productName" 
                                 onChange={(e) => setName(e.target.value)}
                                 placeholder="Product Name"
                                 required
                             />
+
+                            <Label htmlFor="productDescription">Product Description</Label>
                             <Input
                                 value={description}
+                                id="productDescription" 
+                                name="productDescription" 
                                 onChange={(e) => setDescription(e.target.value)}
                                 placeholder="Description"
                                 required
                             />
+
+                            <Label htmlFor="productPrice">Product Price</Label>
                             <Input
                                 type="number"
                                 value={price}
+                                id="productPrice" 
+                                name="productPrice" 
                                 onChange={(e) => setPrice(e.target.value)}
                                 placeholder="Price"
                                 required
                             />
+
+                            <Label htmlFor="productImage">Product Image</Label>
                             <Input
                                 type="file"
+                                id="productImage" 
+                                name="productImage" 
                                 accept="image/*"
                                 onChange={(e) => setImage(e.target.files?.[0] || null)}
                             />
