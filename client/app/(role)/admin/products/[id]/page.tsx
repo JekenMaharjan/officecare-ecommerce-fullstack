@@ -90,15 +90,18 @@ const UpdateProductPage = () => {
                         <CardDescription>Check product details here!</CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-4">
-                        {product?.image && (
-                            <Image
-                                src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}`}
-                                alt={product.name}
-                                height={200}
-                                width={200}
-                                unoptimized
-                            />
-                        )}
+                        <div className="flex border-2 border-gray-400 rounded-md justify-center">
+                            {product?.image && (
+                                <Image
+                                    src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}`}
+                                    alt={product.name}
+                                    height={200}
+                                    width={200}
+                                    unoptimized
+                                />
+                            )}
+                        </div>
+                        
                         <p><strong>Name:</strong> {product?.name}</p>
                         <p><strong>Description:</strong> {product?.description}</p>
                         <p><strong>Price:</strong> Rs. {product?.price}</p>
