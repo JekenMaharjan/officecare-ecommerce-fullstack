@@ -42,7 +42,6 @@ const UpdateProductPage = () => {
         getProduct();
     }, [id]);
 
-
     const getProduct = async () => {
         try {
             const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`);
@@ -56,7 +55,6 @@ const UpdateProductPage = () => {
             toast.error("Product not found");
         }
     };
-
 
     const updateProduct = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -81,16 +79,16 @@ const UpdateProductPage = () => {
     // if (!product) return <p className="text-center mt-10">Loading product...</p>;
 
     return (
-        <div className="min-h-full w-full bg-gray-100/50 py-12 px-6 rounded-md">
-            <div className="flex flex-col md:flex-row justify-evenly gap-6">
+        <div className="max-h-full w-5xl md:w-3xl bg-gray-100/50 py-12 px-20 md:px-10 rounded-md">
+            <div className="flex gap-8">
                 {/* Product Details Card */}
-                <Card className="flex-1">
+                <Card className="flex w-md">
                     <CardHeader>
                         <CardTitle className="text-xl">Product Details</CardTitle>
                         <CardDescription>Check product details here!</CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-4">
-                        <div className="flex border-2 border-gray-400 rounded-md justify-center">
+                        <div className="flex justify-center relative w-full h-65 border-2 border-blue-400 rounded-md p-1">
                             {product?.image && (
                                 <Image
                                     src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}`}
@@ -98,24 +96,26 @@ const UpdateProductPage = () => {
                                     height={200}
                                     width={200}
                                     unoptimized
+                                    loading="eager"
+                                    className="object-cover rounded-md"
                                 />
                             )}
                         </div>
                         
-                        <p><strong>Name:</strong> {product?.name}</p>
-                        <p><strong>Description:</strong> {product?.description}</p>
-                        <p><strong>Price:</strong> Rs. {product?.price}</p>
+                        <p className="line-clamp-1"><strong>Name:</strong> {product?.name}</p>
+                        <p className="line-clamp-2"><strong>Description:</strong> {product?.description}</p>
+                        <p className="line-clamp-1"><strong>Price:</strong> Rs. {product?.price}</p>
                     </CardContent>
                 </Card>
 
                 {/* Update Product Card */}
-                <Card className="flex-1">
+                <Card className="flex w-md">
                     <CardHeader>
                         <CardTitle className="text-xl">Update Product</CardTitle>
                         <CardDescription>Update product here!</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <form onSubmit={updateProduct} className="flex flex-col gap-4">
+                        <form onSubmit={updateProduct} className="flex flex-col gap-4 mt-3">
                             <Label htmlFor="productName">Product Name</Label>
                             <Input
                                 value={name}
@@ -162,7 +162,7 @@ const UpdateProductPage = () => {
                                     className="w-full h-64 object-cover rounded-md mt-2"
                                 />
                             )}
-                            <Button type="submit" className="bg-green-500 hover:bg-green-600">
+                            <Button type="submit" className="bg-green-500 hover:bg-green-600 mt-7">
                                 Update
                             </Button>
                         </form>

@@ -11,7 +11,7 @@ export const getAllProducts = async (req, res) => {
                 name: product.name,
                 description: product.description,
                 price: product.price,
-                image: `/uploads/${product.image.replace(/\\/g, "/").split('/').pop()?.split(".")[0]}.png`,
+                image: product.image ? `/uploads/${product.image.split("\\").pop()}` : null,
                 createdAt: product.createdAt,
                 updatedAt: product.updatedAt
             };

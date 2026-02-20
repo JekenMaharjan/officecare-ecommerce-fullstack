@@ -103,8 +103,8 @@ const AdminProducts = () => {
 
     return (
         <div className="min-h-full w-full bg-gray-100/50 py-12 px-6 rounded-md">
-            <div className="max-w-7xl mx-auto">
-                <h1 className="text-3xl font-bold mb-10 text-center">
+            <div className="w-full p-5">
+                <h1 className="text-4xl font-bold mb-10 text-center text-gray-800">
                     Admin Panel
                 </h1>
 
@@ -193,7 +193,7 @@ const AdminProducts = () => {
                     <Table>
                         {/* <TableCaption>A list of available products.</TableCaption> */}
                         <TableHeader>
-                            <TableRow>
+                            <TableRow className="text-lg">
                                 <TableHead className="w-[100px]">
                                     Product Name
                                 </TableHead>

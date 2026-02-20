@@ -33,7 +33,7 @@ const SignIn = () => {
             try {
                 await axios.post(process.env.NEXT_PUBLIC_API_URL + "/signin", values);
                 toast.success("Sign In Successful!", { position: "top-right" });
-                router.push("/product");
+                router.push("/customer/products");
             } catch (error: any) {
                 toast.error(error.response?.data?.message || "Something went wrong");
             }
