@@ -31,11 +31,6 @@ const SignIn = () => {
         validationSchema,
         onSubmit: async (values) => {
             try {
-<<<<<<< HEAD
-                await axios.post(process.env.NEXT_PUBLIC_API_URL + "/signin", values);
-                toast.success("Sign In Successful!", { position: "top-right" });
-                router.push("/customer/products");
-=======
                 const res = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/signin", values);
                 toast.success("SignIn Successfully !!");
                 
@@ -51,7 +46,6 @@ const SignIn = () => {
                 } else {
                     router.push("/customer/products");
                 }
->>>>>>> develop
             } catch (error: any) {
                 toast.error(error.response?.data?.message || "Something went wrong");
             }
