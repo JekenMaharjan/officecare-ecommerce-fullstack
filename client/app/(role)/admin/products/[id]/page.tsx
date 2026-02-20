@@ -84,16 +84,16 @@ const UpdateProductPage = () => {
     if (!product) return <p className="text-center mt-10">Loading product...</p>;
 
     return (
-        <div className="max-h-full w-5xl md:w-3xl bg-gray-100/50 py-12 px-20 md:px-10 rounded-md">
-            <div className="flex gap-8">
+        <div className="max-h-full xl:w-5xl xl:ml-95 md:w-3xl md:ml-20 sm:w-2xl xs:w-2xl bg-gray-100/50 py-12 px-20 md:px-10 rounded-md">
+            <div className=" flex md:flex-row sm:flex-col gap-8 items-center justify-center">
                 {/* Product Details Card */}
-                <Card className="flex w-md">
+                <Card className="flex w-md ">
                     <CardHeader>
                         <CardTitle className="text-xl">Product Details</CardTitle>
                         <CardDescription>Check product details here!</CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-4">
-                        <div className="flex justify-center relative w-full h-65 border-2 border-blue-400 rounded-md p-1">
+                        <div className="flex justify-center relative w-full h-72 border-2 border-blue-400 rounded-md p-2">
                             {product?.image && (
                                 <Image
                                     src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}`}
@@ -102,7 +102,7 @@ const UpdateProductPage = () => {
                                     width={200}
                                     unoptimized
                                     loading="eager"
-                                    className="object-cover rounded-md"
+                                    className="object-contain rounded-md"
                                 />
                             )}
                         </div>
@@ -121,7 +121,7 @@ const UpdateProductPage = () => {
                         <CardDescription>Update product here!</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <form onSubmit={updateProduct} className="flex flex-col gap-4 mt-3">
+                        <form onSubmit={updateProduct} className="flex flex-col gap-4">
                             <Label htmlFor="productName">Product Name</Label>
                             <Input
                                 value={product.name}
@@ -179,7 +179,7 @@ const UpdateProductPage = () => {
                                     className="w-full h-64 object-cover rounded-md mt-2"
                                 />
                             )}
-                            <Button type="submit" className="bg-green-500 hover:bg-green-600 mt-7">
+                            <Button type="submit" className="bg-green-500 hover:bg-green-600">
                                 Update
                             </Button>
                         </form>
