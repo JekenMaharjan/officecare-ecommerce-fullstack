@@ -21,6 +21,7 @@ type Product = {
     name: string;
     description: string;
     price: number;
+    stock: number;
     image: string;
 };
 
@@ -35,13 +36,13 @@ const UpdateProductPage = () => {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [price, setPrice] = useState("");
+    const [stock, setStock] = useState("");
     const [image, setImage] = useState<File | null>(null);
     
     useEffect(() => {
         if (!id) return;
         getProduct();
     }, [id]);
-
 
     const getProduct = async () => {
         try {
@@ -51,12 +52,12 @@ const UpdateProductPage = () => {
             setName(data.name);
             setDescription(data.description);
             setPrice(String(data.price));
+            setStock(String(data.price));
 
         } catch (error) {
-            toast.error("Product not found");
+            toast.error("Product not found !");
         }
     };
-
 
     const updateProduct = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -67,55 +68,63 @@ const UpdateProductPage = () => {
             formData.append("name", name);
             formData.append("description", description);
             formData.append("price", price);
+            formData.append("stock", stock);
+
             if (image) formData.append("image", image);
 
             await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`, formData);
 
-            toast.success("Product updated successfully!");
+            toast.success("Product updated successfully !!");
             router.push("/admin/products");
         } catch (error: any) {
-            toast.error("Failed to update product");
+            toast.error("Failed to update product !");
         }
     };
 
-    // if (!product) return <p className="text-center mt-10">Loading product...</p>;
+    if (!product) return <p className="text-center mt-10">Loading product...</p>;
 
     return (
-        <div className="min-h-full w-full bg-gray-100/50 py-12 px-6 rounded-md">
-            <div className="flex flex-col md:flex-row justify-evenly gap-6">
+        <div className="max-h-full w-5xl md:w-3xl bg-gray-100/50 py-12 px-20 md:px-10 rounded-md">
+            <div className="flex gap-8">
                 {/* Product Details Card */}
-                <Card className="flex-1">
+                <Card className="flex w-md">
                     <CardHeader>
                         <CardTitle className="text-xl">Product Details</CardTitle>
                         <CardDescription>Check product details here!</CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-4">
-                        {product?.image && (
-                            <Image
-                                src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}`}
-                                alt={product.name}
-                                height={200}
-                                width={200}
-                                unoptimized
-                            />
-                        )}
-                        <p><strong>Name:</strong> {product?.name}</p>
-                        <p><strong>Description:</strong> {product?.description}</p>
-                        <p><strong>Price:</strong> Rs. {product?.price}</p>
+                        <div className="flex justify-center relative w-full h-65 border-2 border-blue-400 rounded-md p-1">
+                            {product?.image && (
+                                <Image
+                                    src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}`}
+                                    alt={product.name}
+                                    height={200}
+                                    width={200}
+                                    unoptimized
+                                    loading="eager"
+                                    className="object-cover rounded-md"
+                                />
+                            )}
+                        </div>
+                        
+                        <p className="line-clamp-1"><strong>Name:</strong> {product?.name}</p>
+                        <p className="line-clamp-2"><strong>Description:</strong> {product?.description}</p>
+                        <p className="line-clamp-1"><strong>Price:</strong> Rs. {product?.price}</p>
+                        <p className="line-clamp-1"><strong>Stock:</strong> {product?.stock}</p>
                     </CardContent>
                 </Card>
 
                 {/* Update Product Card */}
-                <Card className="flex-1">
+                <Card className="flex w-md">
                     <CardHeader>
                         <CardTitle className="text-xl">Update Product</CardTitle>
                         <CardDescription>Update product here!</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <form onSubmit={updateProduct} className="flex flex-col gap-4">
+                        <form onSubmit={updateProduct} className="flex flex-col gap-4 mt-3">
                             <Label htmlFor="productName">Product Name</Label>
                             <Input
-                                value={name}
+                                value={product.name}
                                 id="productName" 
                                 name="productName" 
                                 onChange={(e) => setName(e.target.value)}
@@ -125,7 +134,7 @@ const UpdateProductPage = () => {
 
                             <Label htmlFor="productDescription">Product Description</Label>
                             <Input
-                                value={description}
+                                value={product.description}
                                 id="productDescription" 
                                 name="productDescription" 
                                 onChange={(e) => setDescription(e.target.value)}
@@ -136,11 +145,22 @@ const UpdateProductPage = () => {
                             <Label htmlFor="productPrice">Product Price</Label>
                             <Input
                                 type="number"
-                                value={price}
+                                value={product.price}
                                 id="productPrice" 
                                 name="productPrice" 
                                 onChange={(e) => setPrice(e.target.value)}
                                 placeholder="Price"
+                                required
+                            />
+
+                            <Label htmlFor="productStock">Product Stock</Label>
+                            <Input
+                                type="number"
+                                value={product.stock}
+                                id="productStock" 
+                                name="productStock" 
+                                onChange={(e) => setStock(e.target.value)}
+                                placeholder="Stock"
                                 required
                             />
 
@@ -159,7 +179,7 @@ const UpdateProductPage = () => {
                                     className="w-full h-64 object-cover rounded-md mt-2"
                                 />
                             )}
-                            <Button type="submit" className="bg-green-500 hover:bg-green-600">
+                            <Button type="submit" className="bg-green-500 hover:bg-green-600 mt-7">
                                 Update
                             </Button>
                         </form>

@@ -35,6 +35,7 @@ type Product = {
     name: string;
     description: string;
     price: number;
+    stock: number;
     image: string;
 }
 
@@ -45,12 +46,23 @@ const AdminProducts = () => {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [price, setPrice] = useState("");
+    const [stock, setStock] = useState("");
     const [image, setImage] = useState<File | null>(null);
     const [open, setOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
+        const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
     useEffect(() => {
         getAllProducts();
     }, []);
+
+    useEffect(() => {
+        // Live filtering whenever searchTerm changes
+        const filtered = products.filter((product) =>
+            product.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        setFilteredProducts(filtered);
+    }, [searchTerm, products]);
 
     const getAllProducts = async () => {
         try {
@@ -69,6 +81,7 @@ const AdminProducts = () => {
             formData.append("name", name);
             formData.append("description", description);
             formData.append("price", price);
+            formData.append("stock", stock);
 
             if (image) {
                 formData.append("image", image);
@@ -76,13 +89,14 @@ const AdminProducts = () => {
 
             await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/products`, formData);
 
-            toast.success("Product created successfully!");
+            toast.success("Product created successfully !!");
 
             getAllProducts();
 
             setName("");
             setDescription("");
             setPrice("");
+            setStock("");
             setImage(null);
 
             setOpen(false);
@@ -94,19 +108,47 @@ const AdminProducts = () => {
     const handleDelete = async (id: string) => {
         try {
             await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`);
-            toast.success("Product deleted!");
+            toast.success("Product deleted !!");
             getAllProducts();
         } catch (error: any) {
             toast.error("Something went wrong");
         }
     };
 
+    const handleSearch = () => {
+        const filtered = products.filter((product) =>
+            product.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        setFilteredProducts(filtered);
+    };
+
+    if (!products) {
+        return <p className="text-center mt-10">Loading product...</p>;
+    }
+
     return (
-        <div className="min-h-full w-full bg-gray-100/50 py-12 px-6 rounded-md">
-            <div className="max-w-7xl mx-auto">
-                <h1 className="text-3xl font-bold mb-10 text-center">
+        <div className="min-h-full w-full bg-gray-100/50 p-6 rounded-md">
+            <div className="px-5 pb-5 w-full">
+                <h1 className="text-4xl font-bold mb-10 text-center text-gray-800">
                     Admin Panel
                 </h1>
+
+                {/* Search Bar */}
+                <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-end mb-6">
+                    <Input
+                        type="text"
+                        placeholder="Search by product name..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full sm:w-72 border-blue-600 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-0 focus-visible:border-blue-500"
+                    />
+                    <Button
+                        onClick={handleSearch}
+                        className="bg-blue-500 hover:bg-blue-600 transition-all"
+                    >
+                        Search
+                    </Button>
+                </div>
 
                 <div className="flex justify-end mb-5">
                     <Dialog open={open} onOpenChange={setOpen}>
@@ -162,6 +204,17 @@ const AdminProducts = () => {
                                     </Field>
 
                                     <Field>
+                                        <Label htmlFor="productStock">Stock</Label>
+                                        <Input
+                                            type="number"
+                                            id="productStock"
+                                            name="productStock"
+                                            placeholder="Enter product stock"
+                                            onChange={(e) => setStock(e.target.value)}
+                                        />
+                                    </Field>
+
+                                    <Field>
                                         <Label htmlFor="productImage">Image</Label>
                                         <Input 
                                             type="file" 
@@ -193,7 +246,7 @@ const AdminProducts = () => {
                     <Table>
                         {/* <TableCaption>A list of available products.</TableCaption> */}
                         <TableHeader>
-                            <TableRow>
+                            <TableRow className="text-md">
                                 <TableHead className="w-[100px]">
                                     Product Name
                                 </TableHead>
@@ -202,9 +255,9 @@ const AdminProducts = () => {
                                     Description
                                 </TableHead>
 
-                                {/* <TableHead>
+                                <TableHead>
                                     Stock
-                                </TableHead> */}
+                                </TableHead>
 
                                 <TableHead className="text-center">
                                     Image
@@ -220,46 +273,53 @@ const AdminProducts = () => {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {products.map((product) => (
-                                <TableRow key={product._id}>
-                                    <TableCell className="font-medium">
-                                        {product.name}
-                                    </TableCell>
+                            {filteredProducts && filteredProducts.length > 0 ? (
+                                filteredProducts.map((product) => (
+                                    <TableRow key={product._id}>
+                                        <TableCell className="font-medium">
+                                            {product.name}
+                                        </TableCell>
 
-                                    <TableCell>
-                                        {product.description}
-                                    </TableCell>
+                                        <TableCell>
+                                            {product.description}
+                                        </TableCell>
 
-                                    {/* <TableCell>
-                                        {product.stock}
-                                    </TableCell> */}
+                                        <TableCell>
+                                            {product.stock ?? 0}
+                                        </TableCell>
 
-                                    <TableCell className="flex justify-center">
-                                        {product.image
-                                            ? <FaCheckCircle />
-                                            : <FaCircleXmark />}
-                                    </TableCell>
+                                        <TableCell className="flex justify-center">
+                                            {product.image ? <FaCheckCircle /> : <FaCircleXmark />}
+                                        </TableCell>
 
-                                    <TableCell className="text-center">
-                                        {product.price}
-                                    </TableCell>
+                                        <TableCell className="text-center">
+                                            {product.price}
+                                        </TableCell>
 
-                                    <TableCell className="flex justify-center gap-5">
-                                        <Button
-                                            onClick={() => router.push(`/admin/products/${product._id}`)}
-                                            className="bg-blue-500 hover:bg-blue-600"
-                                        >
-                                            Update
-                                        </Button>
-                                        <Button
-                                            onClick={() => handleDelete(product._id)}
-                                            className="bg-red-500 hover:bg-red-600"
-                                        >
-                                            Delete
-                                        </Button>
+                                        <TableCell className="flex justify-center gap-5">
+                                            <Button
+                                                onClick={() => router.push(`/admin/products/${product._id}`)}
+                                                className="bg-blue-500 hover:bg-blue-600"
+                                            >
+                                                Update
+                                            </Button>
+
+                                            <Button
+                                                onClick={() => handleDelete(product._id)}
+                                                className="bg-red-500 hover:bg-red-600"
+                                            >
+                                                Delete
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={6} className="text-center py-6 text-gray-600">
+                                        No products found
                                     </TableCell>
                                 </TableRow>
-                            ))}
+                            )}
                         </TableBody>
                     </Table>
                 </div>

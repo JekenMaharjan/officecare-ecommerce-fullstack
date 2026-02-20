@@ -31,9 +31,27 @@ const SignIn = () => {
         validationSchema,
         onSubmit: async (values) => {
             try {
+<<<<<<< HEAD
                 await axios.post(process.env.NEXT_PUBLIC_API_URL + "/signin", values);
                 toast.success("Sign In Successful!", { position: "top-right" });
                 router.push("/customer/products");
+=======
+                const res = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/signin", values);
+                toast.success("SignIn Successfully !!");
+                
+                const { token, user } = res.data;   
+
+                // Save token
+                localStorage.setItem("token", token);
+                localStorage.setItem("role", user.role);
+
+                // Redirect based on role
+                if (user.role === "admin") {
+                    router.push("/admin/products");
+                } else {
+                    router.push("/customer/products");
+                }
+>>>>>>> develop
             } catch (error: any) {
                 toast.error(error.response?.data?.message || "Something went wrong");
             }

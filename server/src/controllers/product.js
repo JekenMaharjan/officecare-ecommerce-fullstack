@@ -11,7 +11,8 @@ export const getAllProducts = async (req, res) => {
                 name: product.name,
                 description: product.description,
                 price: product.price,
-                image: `/uploads/${product.image.replace(/\\/g, "/").split('/').pop()?.split(".")[0]}.png`,
+                stock: product.stock,
+                image: product.image ? `/uploads/${product.image.split("\\").pop()}` : null,
                 createdAt: product.createdAt,
                 updatedAt: product.updatedAt
             };
@@ -39,6 +40,7 @@ export const getProductById = async (req, res) => {
             name: product.name,
             description: product.description,
             price: product.price,
+            stock: product.stock,
             image: product.image ? `/uploads/${product.image.split("\\").pop()}` : null,
             createdAt: product.createdAt,
             updatedAt: product.updatedAt,
@@ -52,10 +54,10 @@ export const getProductById = async (req, res) => {
 // Create product
 export const createProduct = async (req, res) => {
     try {
-        const { name, description, price } = req.body;
+        const { name, description, price, stock } = req.body;
 
         // Basic validation
-        if (!name || !description || !price) {
+        if (!name || !description || !price || !stock) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
@@ -67,6 +69,7 @@ export const createProduct = async (req, res) => {
             name,
             description,
             price,
+            stock,
             image: req.file.path,
         });
 
@@ -110,8 +113,8 @@ export const deleteProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, description, price } = req.body;
-        const updateData = { name, description, price };
+        const { name, description, price, stock } = req.body;
+        const updateData = { name, description, price, stock };
 
         if (req.file) {
             updateData.image = req.file.path;
