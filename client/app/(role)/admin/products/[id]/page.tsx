@@ -21,6 +21,7 @@ type Product = {
     name: string;
     description: string;
     price: number;
+    stock: number;
     image: string;
 };
 
@@ -35,6 +36,7 @@ const UpdateProductPage = () => {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [price, setPrice] = useState("");
+    const [stock, setStock] = useState("");
     const [image, setImage] = useState<File | null>(null);
     
     useEffect(() => {
@@ -50,6 +52,7 @@ const UpdateProductPage = () => {
             setName(data.name);
             setDescription(data.description);
             setPrice(String(data.price));
+            setStock(String(data.price));
 
         } catch (error) {
             toast.error("Product not found !");
@@ -65,6 +68,8 @@ const UpdateProductPage = () => {
             formData.append("name", name);
             formData.append("description", description);
             formData.append("price", price);
+            formData.append("stock", stock);
+
             if (image) formData.append("image", image);
 
             await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`, formData);
@@ -105,6 +110,7 @@ const UpdateProductPage = () => {
                         <p className="line-clamp-1"><strong>Name:</strong> {product?.name}</p>
                         <p className="line-clamp-2"><strong>Description:</strong> {product?.description}</p>
                         <p className="line-clamp-1"><strong>Price:</strong> Rs. {product?.price}</p>
+                        <p className="line-clamp-1"><strong>Stock:</strong> {product?.stock}</p>
                     </CardContent>
                 </Card>
 
@@ -118,7 +124,7 @@ const UpdateProductPage = () => {
                         <form onSubmit={updateProduct} className="flex flex-col gap-4 mt-3">
                             <Label htmlFor="productName">Product Name</Label>
                             <Input
-                                value={name}
+                                value={product.name}
                                 id="productName" 
                                 name="productName" 
                                 onChange={(e) => setName(e.target.value)}
@@ -128,7 +134,7 @@ const UpdateProductPage = () => {
 
                             <Label htmlFor="productDescription">Product Description</Label>
                             <Input
-                                value={description}
+                                value={product.description}
                                 id="productDescription" 
                                 name="productDescription" 
                                 onChange={(e) => setDescription(e.target.value)}
@@ -139,11 +145,22 @@ const UpdateProductPage = () => {
                             <Label htmlFor="productPrice">Product Price</Label>
                             <Input
                                 type="number"
-                                value={price}
+                                value={product.price}
                                 id="productPrice" 
                                 name="productPrice" 
                                 onChange={(e) => setPrice(e.target.value)}
                                 placeholder="Price"
+                                required
+                            />
+
+                            <Label htmlFor="productStock">Product Stock</Label>
+                            <Input
+                                type="number"
+                                value={product.stock}
+                                id="productStock" 
+                                name="productStock" 
+                                onChange={(e) => setStock(e.target.value)}
+                                placeholder="Stock"
                                 required
                             />
 

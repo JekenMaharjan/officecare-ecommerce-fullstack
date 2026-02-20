@@ -11,6 +11,7 @@ type Product = {
     name: string;
     description: string;
     price: number;
+    stock: number;
     image: string;
 }
 
@@ -36,6 +37,8 @@ const CustomerProducts = () => {
                 <h1 className="text-4xl font-bold mb-10 text-center text-gray-800">
                     Our Products
                 </h1>
+
+                
 
                 {products && products.length > 0 ? (
                         <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
@@ -67,9 +70,14 @@ const CustomerProducts = () => {
                                             {product.description}
                                         </CardDescription>
 
+                                        <p className="mt-1 text-sm text-gray-600">
+                                            Stock: {product.stock}
+                                        </p>
+
                                         <p className="mt-1 font-bold text-lg text-blue-600">
                                             Rs. {product.price}
                                         </p>
+
                                     </CardContent>
 
                                     <CardFooter>
