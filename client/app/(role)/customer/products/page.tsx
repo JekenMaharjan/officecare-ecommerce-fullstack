@@ -31,8 +31,8 @@ const CustomerProducts = () => {
     }
 
     return (
-        <div className="min-h-full w-full bg-gray-100/50 py-12 px-6 rounded-md">
-            <div className="p-5 w-full">
+        <div className="min-h-full w-full bg-gray-100/50 p-6 rounded-md">
+            <div className="px-5 pb-5 w-full">
                 <h1 className="text-4xl font-bold mb-10 text-center text-gray-800">
                     Our Products
                 </h1>
@@ -42,7 +42,7 @@ const CustomerProducts = () => {
                             {products.map((product) => (
                                 <Card
                                     key={product._id}
-                                    className="flex flex-col gap-0 group overflow-hidden justify-between p-2 pb-5 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300"
+                                    className="flex flex-col gap-0 group overflow-hidden justify-between p-5 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300"
                                 >
                                     <CardContent className="text-center p-0">
                                         <div className="relative flex justify-center w-full h-52 overflow-hidden border-2 border-blue-400 rounded-md p-5">

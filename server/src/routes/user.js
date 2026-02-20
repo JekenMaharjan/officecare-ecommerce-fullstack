@@ -1,12 +1,13 @@
 import express from 'express'
-import { registerNewUser, signinUser } from '../controllers/user.js';
+import { adminMiddleware, authMiddleware } from '../middlewares/auth.js';
+import { getAllUsers } from '../controllers/user.js';
 
 const userRouter = express.Router();
 
-// POST: Register a User
-userRouter.post('/register', registerNewUser);
+userRouter.get("/profile", authMiddleware, (req, res) => {
+    res.json({ message: "Profile data", user: req.user });
+});
 
-// POST: Signin
-userRouter.post('/signin', signinUser);
+userRouter.get("/all-users", authMiddleware, adminMiddleware, getAllUsers);
 
 export default userRouter;

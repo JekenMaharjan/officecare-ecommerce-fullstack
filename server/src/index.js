@@ -5,6 +5,7 @@ import userRouter from './routes/user.js'
 import productRouter from './routes/product.js';
 
 import dotenv from "dotenv";
+import authRouter from './routes/auth.js';
 dotenv.config();
 
 // const express = require('express');
@@ -19,6 +20,7 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
+app.use(authRouter);
 app.use(userRouter);
 app.use(productRouter);
 

@@ -76,7 +76,7 @@ const AdminProducts = () => {
 
             await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/products`, formData);
 
-            toast.success("Product created successfully!");
+            toast.success("Product created successfully !!");
 
             getAllProducts();
 
@@ -94,7 +94,7 @@ const AdminProducts = () => {
     const handleDelete = async (id: string) => {
         try {
             await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`);
-            toast.success("Product deleted!");
+            toast.success("Product deleted !!");
             getAllProducts();
         } catch (error: any) {
             toast.error("Something went wrong");

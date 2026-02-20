@@ -36,7 +36,7 @@ const Register = () => {
         onSubmit: async(values) => {
             try {
                 await axios.post(process.env.NEXT_PUBLIC_API_URL + "/register", values);
-                toast("Registration Successful!", {position: "top-right"});
+                toast.success("Registration Successful !!");
                 router.push("/signin");
             } catch (error: any) {
                 alert(error.response?.data?.message || "Something went wrong");

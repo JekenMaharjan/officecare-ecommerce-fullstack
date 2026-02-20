@@ -52,7 +52,7 @@ const UpdateProductPage = () => {
             setPrice(String(data.price));
 
         } catch (error) {
-            toast.error("Product not found");
+            toast.error("Product not found !");
         }
     };
 
@@ -69,14 +69,14 @@ const UpdateProductPage = () => {
 
             await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`, formData);
 
-            toast.success("Product updated successfully!");
+            toast.success("Product updated successfully !!");
             router.push("/admin/products");
         } catch (error: any) {
-            toast.error("Failed to update product");
+            toast.error("Failed to update product !");
         }
     };
 
-    // if (!product) return <p className="text-center mt-10">Loading product...</p>;
+    if (!product) return <p className="text-center mt-10">Loading product...</p>;
 
     return (
         <div className="max-h-full w-5xl md:w-3xl bg-gray-100/50 py-12 px-20 md:px-10 rounded-md">

@@ -7,6 +7,11 @@ const userSchema = new Schema({
     fullName: String, 
     email: String, 
     password: String, 
+    role: {
+        type: String,
+        enum: ["admin", "customer"],
+        default: "customer",
+    },
 }, { timestamps: true });
 
 // Create model
