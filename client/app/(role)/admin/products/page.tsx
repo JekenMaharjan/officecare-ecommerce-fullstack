@@ -49,10 +49,20 @@ const AdminProducts = () => {
     const [stock, setStock] = useState("");
     const [image, setImage] = useState<File | null>(null);
     const [open, setOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
+        const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
     useEffect(() => {
         getAllProducts();
     }, []);
+
+    useEffect(() => {
+        // Live filtering whenever searchTerm changes
+        const filtered = products.filter((product) =>
+            product.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        setFilteredProducts(filtered);
+    }, [searchTerm, products]);
 
     const getAllProducts = async () => {
         try {
@@ -105,16 +115,40 @@ const AdminProducts = () => {
         }
     };
 
+    const handleSearch = () => {
+        const filtered = products.filter((product) =>
+            product.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        setFilteredProducts(filtered);
+    };
+
     if (!products) {
         return <p className="text-center mt-10">Loading product...</p>;
     }
 
     return (
-        <div className="min-h-full w-full bg-gray-100/50 py-12 px-6 rounded-md">
-            <div className="w-full p-5">
+        <div className="min-h-full w-full bg-gray-100/50 p-6 rounded-md">
+            <div className="px-5 pb-5 w-full">
                 <h1 className="text-4xl font-bold mb-10 text-center text-gray-800">
                     Admin Panel
                 </h1>
+
+                {/* Search Bar */}
+                <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-end mb-6">
+                    <Input
+                        type="text"
+                        placeholder="Search by product name..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full sm:w-72 border-blue-600 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-0 focus-visible:border-blue-500"
+                    />
+                    <Button
+                        onClick={handleSearch}
+                        className="bg-blue-500 hover:bg-blue-600 transition-all"
+                    >
+                        Search
+                    </Button>
+                </div>
 
                 <div className="flex justify-end mb-5">
                     <Dialog open={open} onOpenChange={setOpen}>
@@ -239,8 +273,8 @@ const AdminProducts = () => {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {products && products.length > 0 ? (
-                                products.map((product) => (
+                            {filteredProducts && filteredProducts.length > 0 ? (
+                                filteredProducts.map((product) => (
                                     <TableRow key={product._id}>
                                         <TableCell className="font-medium">
                                             {product.name}
