@@ -12,7 +12,9 @@ const userSchema = new Schema({
         enum: ["admin", "customer"],
         default: "customer",
     },
-}, { timestamps: true });
+    }, 
+    { timestamps: true }
+);
 
 // Create model
 const User = mongoose.model('User', userSchema);

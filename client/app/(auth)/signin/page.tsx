@@ -31,8 +31,7 @@ const SignIn = () => {
         validationSchema,
         onSubmit: async (values) => {
             try {
-                const res = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/signin", values);
-                toast.success("SignIn Successfully !!");
+                const res = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/auth/signin", values);
                 
                 const { token, user } = res.data;   
 
@@ -43,11 +42,13 @@ const SignIn = () => {
                 // Redirect based on role
                 if (user.role === "admin") {
                     router.push("/admin/products");
+                    toast.success("Admin SignIn Successfully !!");
                 } else {
                     router.push("/customer/products");
+                    toast.success("SignIn Successfully !!");
                 }
             } catch (error: any) {
-                toast.error(error.response?.data?.message || "Something went wrong");
+                toast.error("Failed to Login User !!");
             }
         },
     });

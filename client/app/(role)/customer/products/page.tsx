@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 type Product = {
-    _id: number;
+    _id: string;
     name: string;
     description: string;
     price: number;
@@ -21,9 +21,12 @@ const CustomerProducts = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+    const [addingToCartId, setAddingToCartId] = useState<string | null>(null);
+    const [cartCount, setCartCount] = useState(0);
 
     useEffect(() => {
         getAllProducts();
+        fetchCartCount();
     }, []);
 
     useEffect(() => {
@@ -41,6 +44,32 @@ const CustomerProducts = () => {
             setFilteredProducts(data); // Initially show all products
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Something went wrong");
+        }
+    };
+
+    const fetchCartCount = async () => {
+        try {
+            const { data } = await axios.get(
+                `${process.env.NEXT_PUBLIC_API_URL}/cart/count`,
+                { withCredentials: true }
+            );
+            setCartCount(data.count);
+        } catch (err) {
+            toast.error("Failed fetching cart count !!");
+            setCartCount(0);
+        }
+    };
+
+    const handleAddToCart = async (productId: string) => {
+        try {
+            await axios.post(
+                `${process.env.NEXT_PUBLIC_API_URL}/cart`,
+                { productId, quantity: 1 },
+                { withCredentials: true } // important for cookie auth
+            );
+            fetchCartCount();
+        } catch (err) {
+            console.error(err);
         }
     };
 
@@ -85,7 +114,7 @@ const CustomerProducts = () => {
                             >
                                 <CardContent className="text-center p-0">
                                     <div className="relative flex justify-center w-full h-52 overflow-hidden border-2 border-blue-400 rounded-md p-5">
-                                        {product?.image && (
+                                        {product?.image ? (
                                             <Image
                                                 src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}`}
                                                 alt={product.name}
@@ -93,7 +122,15 @@ const CustomerProducts = () => {
                                                 width={170}
                                                 unoptimized
                                                 loading="eager"
-                                                className="object-contain transition-transform duration-300 group-hover:scale-105"
+                                                className="object-contain w-auto h-auto transition-transform duration-300 group-hover:scale-105"
+                                            />
+                                        ) : (
+                                            <Image
+                                                src="/placeholder.png"
+                                                alt="Placeholder"
+                                                height={170}
+                                                width={170}
+                                                className="object-contain w-auto h-auto"
                                             />
                                         )}
                                     </div>
@@ -115,10 +152,14 @@ const CustomerProducts = () => {
                                     </p>
                                 </CardContent>
 
-                                <CardFooter>
-                                    <button className="mt-1 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
-                                        Add to Cart
-                                    </button>
+                                <CardFooter className="flex justify-center">
+                                    <Button
+                                        onClick={() => handleAddToCart(product._id)}
+                                        disabled={addingToCartId === product._id || product.stock === 0}
+                                        className="bg-yellow-500 hover:bg-yellow-600 px-10"
+                                    >
+                                        {addingToCartId === product._id ? "Adding..." : product.stock === 0 ? "Out of Stock" : "Add to Cart"}
+                                    </Button>
                                 </CardFooter>
                             </Card>
                         ))}

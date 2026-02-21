@@ -9,7 +9,9 @@ const productSchema = new Schema({
     price: Number,
     stock: Number,
     image: String,
-}, { timestamps: true });
+    }, 
+    { timestamps: true }
+);
 
 // Create model
 const Product = mongoose.model('Product', productSchema);

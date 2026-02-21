@@ -1,36 +1,44 @@
-import express from 'express'
-import connect from './db/connect.js'
-import cors from 'cors'
-import userRouter from './routes/user.js'
-import productRouter from './routes/product.js';
-
+import express from "express";
+import connect from "./db/connect.js";
+import cors from "cors";
 import dotenv from "dotenv";
-import authRouter from './routes/auth.js';
+import cookieParser from "cookie-parser";
+
+import authRouter from "./routes/authRoutes.js";
+import userRouter from "./routes/userRoutes.js";
+import productRouter from "./routes/productRoutes.js";
+import cartRouter from "./routes/cartRoutes.js";
+
 dotenv.config();
-
-// const express = require('express');
 const app = express();
-const port = process.env.PORT || 5000; // default port if env not set
+const port = process.env.PORT || 5000;
 
-// Connect to database
+// Connect to DB
 connect();
 
 // Middleware
-app.use(cors());
+app.use(
+    cors({
+        origin: "http://localhost:3000",
+        credentials: true,
+    })
+);
 app.use(express.json());
+app.use(cookieParser());
 
-// Routes
-app.use(authRouter);
-app.use(userRouter);
-app.use(productRouter);
+// Routes with proper paths
+app.use("/api/auth", authRouter);
+app.use("/api/users", userRouter);
+app.use("/api/products", productRouter);
+app.use("/api/cart", cartRouter);
 
-// Route to check server
-app.get('/', (req, res) => {
-    console.log("Hello World!!");      // logs on server
-    res.send("Server is working!");    // sends response to browser
+// Root test route
+app.get("/", (req, res) => {
+    console.log("Hello World!!");
+    res.send("Server is working!");
 });
 
 // Start server
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
-})
+    console.log(`Server running on port ${port}`);
+});

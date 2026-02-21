@@ -53,6 +53,7 @@ const UpdateProductPage = () => {
             setDescription(data.description);
             setPrice(String(data.price));
             setStock(String(data.price));
+            setImage(data.image);
 
         } catch (error) {
             toast.error("Product not found !");
@@ -102,7 +103,7 @@ const UpdateProductPage = () => {
                                     width={200}
                                     unoptimized
                                     loading="eager"
-                                    className="object-cover rounded-md"
+                                    className="object-cover rounded-md h-auto w-auto"
                                 />
                             )}
                         </div>
