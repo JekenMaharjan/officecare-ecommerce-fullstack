@@ -257,7 +257,7 @@ const AdminProducts = () => {
                                     Description
                                 </TableHead>
 
-                                <TableHead>
+                                <TableHead className="text-center">
                                     Stock
                                 </TableHead>
 
@@ -278,15 +278,15 @@ const AdminProducts = () => {
                             {filteredProducts && filteredProducts.length > 0 ? (
                                 filteredProducts.map((product) => (
                                     <TableRow key={product._id}>
-                                        <TableCell className="font-medium">
+                                        <TableCell className="w-50 font-medium whitespace-normal">
                                             {product.name}
                                         </TableCell>
 
-                                        <TableCell>
+                                        <TableCell className="w-lg whitespace-normal">
                                             {product.description}
                                         </TableCell>
 
-                                        <TableCell>
+                                        <TableCell className="text-center">
                                             {product.stock ?? 0}
                                         </TableCell>
 

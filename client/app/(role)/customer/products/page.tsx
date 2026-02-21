@@ -81,7 +81,7 @@ const CustomerProducts = () => {
     };
 
     return (
-        <div className="min-h-full max-w-full bg-gray-100/50 p-6 pt-10 rounded-md">
+        <div className="min-h-full min-w-full bg-gray-100/50 p-6 pt-10 rounded-md">
             <div className="px-5 pb-5 w-full">
                 <h1 className="text-4xl font-bold mb-5 text-center text-gray-800">
                     Our Products
@@ -108,11 +108,11 @@ const CustomerProducts = () => {
 
                 {/* Product Grid */}
                 {filteredProducts && filteredProducts.length > 0 ? (
-                    <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+                    <div className="grid gap-10 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                         {filteredProducts.map((product) => (
                             <Card
                                 key={product._id}
-                                className="flex flex-col gap-0 group overflow-hidden justify-between p-5 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300"
+                                className="flex flex-col gap-0 group w-full overflow-hidden justify-between p-5 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300"
                             >
                                 <CardContent className="text-center p-0">
                                     <div className="relative flex justify-center w-full h-52 overflow-hidden border-2 border-blue-400 rounded-md p-5">
@@ -124,7 +124,7 @@ const CustomerProducts = () => {
                                                 width={170}
                                                 unoptimized
                                                 loading="eager"
-                                                className="object-contain w-auto h-auto transition-transform duration-300 group-hover:scale-105"
+                                                className="object-contain w-auto h-auto transition-transform duration-300 group-hover:scale-110"
                                             />
                                         ) : (
                                             <Image
@@ -149,16 +149,16 @@ const CustomerProducts = () => {
                                         Stock: {product.stock}
                                     </p>
 
-                                    <p className="mt-1 font-bold text-lg text-blue-600">
+                                    <p className="mt-1 font-semibold text-lg text-blue-600">
                                         Rs. {product.price}
                                     </p>
                                 </CardContent>
 
-                                <CardFooter className="flex justify-center">
+                                <CardFooter className="flex justify-center mt-3 min-w-full p-0">
                                     <Button
                                         onClick={() => handleAddToCart(product._id)}
                                         disabled={addingToCartId === product._id || product.stock === 0}
-                                        className="bg-yellow-500 hover:bg-yellow-600 px-10"
+                                        className="bg-yellow-500 hover:bg-yellow-600 w-full"
                                     >
                                         {addingToCartId === product._id ? "Adding..." : product.stock === 0 ? "Out of Stock" : "Add to Cart"}
                                     </Button>
