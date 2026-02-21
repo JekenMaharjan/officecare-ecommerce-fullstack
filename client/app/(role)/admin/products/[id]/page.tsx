@@ -32,33 +32,43 @@ const UpdateProductPage = () => {
     const params = useParams();
     const id = params.id as string; // Take the id value from the URL and treat it as a string
 
+    // State management
     const [product, setProduct] = useState<Product | null>(null);
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [price, setPrice] = useState("");
     const [stock, setStock] = useState("");
-    const [image, setImage] = useState<File | null>(null);
+    const [image, setImage] = useState<File | null>(null);  // for new uploaded file
+    const [preview, setPreview] = useState<string | null>(null); // for showing image
     
     useEffect(() => {
         if (!id) return;
         getProduct();
     }, [id]);
 
+    // Get products detail from db
     const getProduct = async () => {
         try {
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`);
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/products/${id}`);
 
             setProduct(data);
             setName(data.name);
             setDescription(data.description);
             setPrice(String(data.price));
-            setStock(String(data.price));
+            setStock(String(data.stock));
+
+            console.log(data.image);
+            // Set preview directly from backend image path
+            if (data.image) {
+                setPreview(`${process.env.NEXT_PUBLIC_API_URL}${data.image}`);
+            }
 
         } catch (error) {
-            toast.error("Product not found !");
+            toast.error("Product not found!");
         }
     };
 
+    // Update selected product by id
     const updateProduct = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!id) return;
@@ -69,10 +79,9 @@ const UpdateProductPage = () => {
             formData.append("description", description);
             formData.append("price", price);
             formData.append("stock", stock);
-
             if (image) formData.append("image", image);
 
-            await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`, formData);
+            await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/api/products/${id}`, formData);
 
             toast.success("Product updated successfully !!");
             router.push("/admin/products");
@@ -84,108 +93,150 @@ const UpdateProductPage = () => {
     if (!product) return <p className="text-center mt-10">Loading product...</p>;
 
     return (
-        <div className="max-h-full xl:w-5xl xl:ml-95 md:w-3xl md:ml-20 sm:w-2xl xs:w-2xl bg-gray-100/50 py-12 px-20 md:px-10 rounded-md">
-            <div className=" flex md:flex-row sm:flex-col gap-8 items-center justify-center">
+        <div className="flex gap-10 bg-gray-100/50 p-12 rounded-md">
                 {/* Product Details Card */}
-                <Card className="flex w-md ">
+                <Card className="max-h-full w-md">
                     <CardHeader>
                         <CardTitle className="text-xl">Product Details</CardTitle>
                         <CardDescription>Check product details here!</CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-4">
-                        <div className="flex justify-center relative w-full h-72 border-2 border-blue-400 rounded-md p-2">
+                        <div className="flex group justify-center items-center h-54 border-2 border-blue-300 rounded-lg p-3">
                             {product?.image && (
-                                <Image
-                                    src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}`}
-                                    alt={product.name}
-                                    height={200}
-                                    width={200}
-                                    unoptimized
-                                    loading="eager"
-                                    className="object-contain rounded-md"
-                                />
+                                <div className="relative w-40 aspect-square">
+                                    <Image
+                                        src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}`}
+                                        alt={product.image}
+                                        className="object-contain w-auto h-auto transition-transform duration-300 group-hover:scale-120"
+                                        fill
+                                        unoptimized
+                                        loading="eager"
+                                    />
+                                </div>
                             )}
                         </div>
                         
-                        <p className="line-clamp-1"><strong>Name:</strong> {product?.name}</p>
-                        <p className="line-clamp-2"><strong>Description:</strong> {product?.description}</p>
-                        <p className="line-clamp-1"><strong>Price:</strong> Rs. {product?.price}</p>
-                        <p className="line-clamp-1"><strong>Stock:</strong> {product?.stock}</p>
+                        <div className="flex flex-col gap-2">
+                            <p className="line-clamp-2 text-sm"><strong className="font-medium">Name:</strong> {product?.name}</p>
+                            <p className="line-clamp-3 text-sm"><strong className="font-medium">Description:</strong> {product?.description}</p>
+                            <p className="line-clamp-1 text-sm"><strong className="font-medium">Stock:</strong> {product?.stock}</p>
+                            <p className="line-clamp-1 text-sm"><strong className="font-medium">Price:</strong> Rs. {product?.price}</p>
+                        </div>
                     </CardContent>
                 </Card>
 
                 {/* Update Product Card */}
-                <Card className="flex w-md">
+                <Card className="h-full w-xl">
                     <CardHeader>
                         <CardTitle className="text-xl">Update Product</CardTitle>
                         <CardDescription>Update product here!</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={updateProduct} className="flex flex-col gap-4">
-                            <Label htmlFor="productName">Product Name</Label>
-                            <Input
-                                value={product.name}
-                                id="productName" 
-                                name="productName" 
-                                onChange={(e) => setName(e.target.value)}
-                                placeholder="Product Name"
-                                required
-                            />
+                            <div className="flex gap-5 max-w-full">
+                                <span className="flex flex-col gap-2 flex-1">
+                                    <Label htmlFor="productName">Product Name</Label>
+                                    <Input
+                                        type="text"
+                                        value={name}
+                                        id="productName"
+                                        name="productName"
+                                        onChange={(e) => setName(e.target.value)}
+                                        placeholder="Product Name"
+                                        className="text-gray-500 border-gray-500"
+                                        required
+                                    />
+                                </span>
 
-                            <Label htmlFor="productDescription">Product Description</Label>
-                            <Input
-                                value={product.description}
-                                id="productDescription" 
-                                name="productDescription" 
-                                onChange={(e) => setDescription(e.target.value)}
-                                placeholder="Description"
-                                required
-                            />
+                                <span className="flex flex-col gap-2 flex-1">
+                                    <Label htmlFor="productStock">Product Stock</Label>
+                                    <Input
+                                        type="number"
+                                        value={stock}
+                                        id="productStock"
+                                        name="productStock"
+                                        onChange={(e) => setStock(e.target.value)}
+                                        placeholder="Stock"
+                                        className="text-gray-500 border-gray-500"
+                                        required
+                                    />
+                                </span>
 
-                            <Label htmlFor="productPrice">Product Price</Label>
-                            <Input
-                                type="number"
-                                value={product.price}
-                                id="productPrice" 
-                                name="productPrice" 
-                                onChange={(e) => setPrice(e.target.value)}
-                                placeholder="Price"
-                                required
-                            />
+                                <span className="flex flex-col gap-2 flex-1">
+                                    <Label htmlFor="productPrice">Product Price</Label>
+                                    <Input
+                                        type="number"
+                                        value={price}
+                                        id="productPrice"
+                                        name="productPrice"
+                                        className="text-gray-500 border-gray-500"
+                                        onChange={(e) => setPrice(e.target.value)}
+                                        placeholder="Price"
+                                        required
+                                    />
+                                </span>
+                            </div>
 
-                            <Label htmlFor="productStock">Product Stock</Label>
-                            <Input
-                                type="number"
-                                value={product.stock}
-                                id="productStock" 
-                                name="productStock" 
-                                onChange={(e) => setStock(e.target.value)}
-                                placeholder="Stock"
-                                required
-                            />
+                            <div className="flex gap-5 max-w-full">
+                                <span className="flex flex-col gap-2 flex-1">
+                                    <Label htmlFor="productDescription">Product Description</Label>
+                                    <Input
+                                        type="text"
+                                        value={description}
+                                        id="productDescription"
+                                        name="productDescription"
+                                        onChange={(e) => setDescription(e.target.value)}
+                                        placeholder="Description"
+                                        className="text-gray-500 border-gray-500"
+                                        required
+                                    />
+                                </span>
 
-                            <Label htmlFor="productImage">Product Image</Label>
-                            <Input
-                                type="file"
-                                id="productImage" 
-                                name="productImage" 
-                                accept="image/*"
-                                onChange={(e) => setImage(e.target.files?.[0] || null)}
-                            />
-                            {image && (
-                                <img
-                                    src={URL.createObjectURL(image)}
-                                    alt="New Preview"
-                                    className="w-full h-64 object-cover rounded-md mt-2"
-                                />
-                            )}
+                                <span className="flex flex-col gap-2 flex-1">
+                                    <Label htmlFor="productImage">Product Image</Label>
+                                    <Input
+                                        type="file"
+                                        id="productImage"
+                                        name="productImage"
+                                        className="border-gray-500"
+                                        accept="image/*"
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            if (!file) return;
+                                            setImage(file);
+                                            // create preview safely
+                                            const objectUrl = URL.createObjectURL(file);
+                                            setPreview(objectUrl);
+                                        }}
+                                    />
+                                </span>
+                            </div>
+
+                        <div className="flex group justify-center items-center h-54 border-2 border-blue-300 rounded-lg p-3">
+                                {preview ? (
+                                <div className="relative w-40 aspect-square">
+                                        <img
+                                            src={preview}
+                                            alt="Preview"
+                                            className="object-contain w-auto h-auto transition-transform duration-300 group-hover:scale-120"
+                                            onError={() => setPreview(null)}
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="flex h-50 w-sm justify-center items-center border-2 border-blue-300 rounded-lg">
+                                        <p className="text-center p-2 text-sm text-gray-500">
+                                            Here's your selected image preview
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+
                             <Button type="submit" className="bg-green-500 hover:bg-green-600">
                                 Update
                             </Button>
                         </form>
                     </CardContent>
                 </Card>
-            </div>
         </div>
     );
 };

@@ -66,7 +66,7 @@ const AdminProducts = () => {
 
     const getAllProducts = async () => {
         try {
-            const response = await axios.get(process.env.NEXT_PUBLIC_API_URL + "/products");
+            const response = await axios.get(process.env.NEXT_PUBLIC_API_URL + "/api/products");
             setProducts(response.data);
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Something went wrong");
@@ -87,7 +87,7 @@ const AdminProducts = () => {
                 formData.append("image", image);
             }
 
-            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/products`, formData);
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/products`, formData);
 
             toast.success("Product created successfully !!");
 
@@ -107,7 +107,7 @@ const AdminProducts = () => {
 
     const handleDelete = async (id: string) => {
         try {
-            await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`);
+            await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/products/${id}`);
             toast.success("Product deleted !!");
             getAllProducts();
         } catch (error: any) {
@@ -127,14 +127,14 @@ const AdminProducts = () => {
     }
 
     return (
-        <div className="min-h-full w-full bg-gray-100/50 p-6 rounded-md">
-            <div className="px-5 pb-5 w-full">
-                <h1 className="text-4xl font-bold mb-10 text-center text-gray-800">
+        <div className="min-h-full w-7xl bg-gray-100/50 p-6 rounded-md px-10">
+            <div className="px-5 pb-5 w-full pt-5">
+                <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 text-center mb-6">
                     Admin Panel
                 </h1>
 
                 {/* Search Bar */}
-                <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-end mb-6">
+                <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-end">
                     <Input
                         type="text"
                         placeholder="Search by product name..."
@@ -150,20 +150,20 @@ const AdminProducts = () => {
                     </Button>
                 </div>
 
+                <hr className="my-5 border-blue-700" />
+
                 <div className="flex justify-end mb-5">
                     <Dialog open={open} onOpenChange={setOpen}>
                         <DialogTrigger asChild>
-                            <Button
-                                className="bg-green-500 border-none text-white hover:text-white hover:bg-green-600" variant="outline">
+                            <Button className="bg-green-500 border-none text-white hover:text-white hover:bg-green-600" variant="outline">
                                 Add Product
                             </Button>
                         </DialogTrigger>
 
                         <DialogContent className="sm:max-w-sm">
-                            <form onSubmit={addProduct}>
+                            <form onSubmit={addProduct} className="flex flex-col gap-4">
                                 <DialogHeader>
                                     <DialogTitle>Add Product</DialogTitle>
-
                                     <DialogDescription>
                                         Add product here. Click save when you&apos;re done.
                                     </DialogDescription>
@@ -177,7 +177,8 @@ const AdminProducts = () => {
                                             id="productName" 
                                             name="productName" 
                                             placeholder="Enter product name" 
-                                            onChange={(e) => setName(e.target.value)} 
+                                            onChange={(e) => setName(e.target.value)}
+                                            className="rounded-lg" 
                                         />
                                     </Field>
 
@@ -189,6 +190,7 @@ const AdminProducts = () => {
                                             name="productDescription" 
                                             placeholder="Enter product description" 
                                             onChange={(e) => setDescription(e.target.value)}
+                                            className="rounded-lg"
                                         />
                                     </Field>
 
@@ -200,6 +202,7 @@ const AdminProducts = () => {
                                             name="productPrice" 
                                             placeholder="Enter product price" 
                                             onChange={(e) => setPrice(e.target.value)}
+                                            className="rounded-lg"
                                         />
                                     </Field>
 
@@ -211,6 +214,7 @@ const AdminProducts = () => {
                                             name="productStock"
                                             placeholder="Enter product stock"
                                             onChange={(e) => setStock(e.target.value)}
+                                            className="rounded-lg"
                                         />
                                     </Field>
 
@@ -221,20 +225,16 @@ const AdminProducts = () => {
                                             id="productImage" 
                                             name="productImage" 
                                             accept="image/*"
-                                            onChange={(e) => {
-                                                if (e.target.files) {
-                                                    setImage(e.target.files[0]);
-                                                }
-                                            }}
+                                            onChange={(e) => e.target.files && setImage(e.target.files[0])}
+                                            className="rounded-lg"
                                         />
                                     </Field>
                                 </FieldGroup>
 
                                 <DialogFooter className="flex gap-5 mt-3">
                                     <DialogClose asChild>
-                                        <Button variant="outline">Cancel</Button>
+                                        <Button variant="outline" className="rounded-lg">Cancel</Button>
                                     </DialogClose>
-
                                     <Button type="submit" className="bg-green-500 hover:bg-green-600 border-none">Save</Button>
                                 </DialogFooter>
                             </form>
@@ -242,60 +242,36 @@ const AdminProducts = () => {
                     </Dialog>
                 </div>
 
-                <div>
-                    <Table>
+                {/* Table */}
+                <div className="overflow-x-auto">
+                    <Table className="min-w-full">
                         {/* <TableCaption>A list of available products.</TableCaption> */}
                         <TableHeader>
                             <TableRow className="text-md">
-                                <TableHead className="w-[100px]">
-                                    Product Name
-                                </TableHead>
-
-                                <TableHead>
-                                    Description
-                                </TableHead>
-
-                                <TableHead>
-                                    Stock
-                                </TableHead>
-
-                                <TableHead className="text-center">
-                                    Image
-                                </TableHead>
-
-                                <TableHead className="text-center">
-                                    Price (Rs.)
-                                </TableHead>
-
-                                <TableHead className="text-center">
-                                    Action
-                                </TableHead>
+                                <TableHead className="w-[100px]">Product Name</TableHead>
+                                <TableHead>Description</TableHead>
+                                <TableHead className="text-center">Stock</TableHead>
+                                <TableHead className="text-center">Image</TableHead>
+                                <TableHead className="text-center">Price (Rs.)</TableHead>
+                                <TableHead className="text-center">Action</TableHead>
                             </TableRow>
                         </TableHeader>
+
                         <TableBody>
                             {filteredProducts && filteredProducts.length > 0 ? (
                                 filteredProducts.map((product) => (
                                     <TableRow key={product._id}>
-                                        <TableCell className="font-medium">
-                                            {product.name}
-                                        </TableCell>
-
-                                        <TableCell>
-                                            {product.description}
-                                        </TableCell>
-
-                                        <TableCell>
-                                            {product.stock ?? 0}
-                                        </TableCell>
-
+                                        <TableCell className="w-50 font-medium whitespace-normal">{product.name}</TableCell>
+                                        <TableCell className="w-lg whitespace-normal">{product.description}</TableCell>
+                                        <TableCell className="text-center">{product.stock ?? 0}</TableCell>
                                         <TableCell className="flex justify-center">
-                                            {product.image ? <FaCheckCircle /> : <FaCircleXmark />}
+                                            {
+                                            product.image 
+                                            ? <FaCheckCircle className="text-green-600 bg-white rounded-full" /> 
+                                            : <FaCircleXmark className="text-red-600 bg-white rounded-full"/>
+                                            }
                                         </TableCell>
-
-                                        <TableCell className="text-center">
-                                            {product.price}
-                                        </TableCell>
-
+                                        <TableCell className="text-center">{product.price}</TableCell>
                                         <TableCell className="flex justify-center gap-5">
                                             <Button
                                                 onClick={() => router.push(`/admin/products/${product._id}`)}
@@ -303,7 +279,6 @@ const AdminProducts = () => {
                                             >
                                                 Update
                                             </Button>
-
                                             <Button
                                                 onClick={() => handleDelete(product._id)}
                                                 className="bg-red-500 hover:bg-red-600"

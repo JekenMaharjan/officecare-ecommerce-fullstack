@@ -36,46 +36,44 @@ export const signinUser = async (req, res) => {
         // Admin login check
         if (email === "admin@gmail.com" && password === "admin@123") {
             const token = jwt.sign({ email, role: "admin" }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+            res.cookie("token", token, {
+                httpOnly: true,
+                secure: false,      // true if using HTTPS
+                sameSite: "lax",    // or "none" if frontend is on different domain + HTTPS
+                maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+            });
+
             return res.json({
                 message: "Admin logged in successfully!",
                 user: { email, role: "admin" },
                 isLoggedIn: true,
-                token,
             });
         }
 
-        // Find user by email
+        // Regular user
         const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(400).json({ message: 'E-mail not found!' });
-        }
+        if (!user) return res.status(400).json({ message: "E-mail not found!" });
 
-        // Check password
         const isMatched = await bcrypt.compare(password, user.password);
-        if (!isMatched) {
-            return res.status(400).json({ message: 'Invalid password!' });
-        }
+        if (!isMatched) return res.status(400).json({ message: "Invalid password!" });
 
-        // Generate JWT with role
-        const token = jwt.sign(
-            { id: user._id, role: user.role },
-            process.env.JWT_SECRET,
-            { expiresIn: "7d" }
-        );
+        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
-        // Respond
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        });
+
         return res.json({
-            message: 'Logged in successfully!',
-            user: {
-                email: user.email,
-                role: user.role
-            },
+            message: "Logged in successfully!",
+            user: { email: user.email, role: user.role },
             isLoggedIn: true,
-            token
-        })
-
+        });
     } catch (error) {
-        console.error("SignIn error:", error)
-        return res.status(500).json({ message: 'SignIn failed. Try again later.' })
+        console.error("SignIn error:", error);
+        return res.status(500).json({ message: "SignIn failed. Try again later." });
     }
 };

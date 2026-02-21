@@ -6,13 +6,8 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
     return (
         <div className="min-h-screen max-w-screen flex flex-col overflow-hidden">
             <Toaster position="top-right" richColors />
-
             <Navbar />
-
-            <main className="flex-1 overflow-auto bg-gradient-to-br from-blue-500 to-purple-500 flex p-10">
-                {children}
-            </main>
-
+            <main className="flex flex-1 justify-center overflow-auto bg-gradient-to-br from-blue-500 to-purple-500 p-10">{children}</main>
             <Footer />
         </div>
     );
