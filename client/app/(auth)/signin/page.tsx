@@ -28,7 +28,7 @@ const SignIn = () => {
         validationSchema,
         onSubmit: async (values) => {
             try {
-                const res = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/auth/signin", values);
+                const res = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/api/auth/signin", values);
                 const { token, user } = res.data;
                 localStorage.setItem("token", token);
                 localStorage.setItem("role", user.role);
@@ -101,7 +101,7 @@ const SignIn = () => {
                         {/* SignIn Button */}
                         <Button
                             type="submit"
-                            className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-xl shadow-lg transform transition hover:scale-105 duration-300"
+                            className="w-full bg-blue-500 hover:bg-blue-600 mt-5 text-white py-3 rounded-xl shadow-lg transform transition hover:scale-105 duration-300"
                         >
                             {formik.isSubmitting ? "Signing In..." : "Sign In"}
                         </Button>

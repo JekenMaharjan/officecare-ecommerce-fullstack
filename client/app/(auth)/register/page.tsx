@@ -31,7 +31,7 @@ const Register = () => {
         validationSchema,
         onSubmit: async (values) => {
             try {
-                await axios.post(process.env.NEXT_PUBLIC_API_URL + "/auth/register", values);
+                await axios.post(process.env.NEXT_PUBLIC_API_URL + "/api/auth/register", values);
                 toast.success("Registration Successful !!");
                 router.push("/signin");
             } catch (error: any) {

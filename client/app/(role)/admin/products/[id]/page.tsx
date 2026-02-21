@@ -95,7 +95,7 @@ const UpdateProductPage = () => {
     return (
         <div className="flex gap-10 bg-gray-100/50 p-12 rounded-md">
                 {/* Product Details Card */}
-                <Card className="max-h-full">
+                <Card className="max-h-full w-md">
                     <CardHeader>
                         <CardTitle className="text-xl">Product Details</CardTitle>
                         <CardDescription>Check product details here!</CardDescription>
@@ -116,15 +116,17 @@ const UpdateProductPage = () => {
                             )}
                         </div>
                         
-                        <p className="line-clamp-1"><strong className="font-medium">Name:</strong> {product?.name}</p>
-                        <p className="line-clamp-2"><strong className="font-medium">Description:</strong> {product?.description}</p>
-                        <p className="line-clamp-1"><strong className="font-medium">Stock:</strong> {product?.stock}</p>
-                        <p className="line-clamp-1"><strong className="font-medium">Price:</strong> Rs. {product?.price}</p>
+                        <div className="flex flex-col gap-2">
+                            <p className="line-clamp-2 text-sm"><strong className="font-medium">Name:</strong> {product?.name}</p>
+                            <p className="line-clamp-3 text-sm"><strong className="font-medium">Description:</strong> {product?.description}</p>
+                            <p className="line-clamp-1 text-sm"><strong className="font-medium">Stock:</strong> {product?.stock}</p>
+                            <p className="line-clamp-1 text-sm"><strong className="font-medium">Price:</strong> Rs. {product?.price}</p>
+                        </div>
                     </CardContent>
                 </Card>
 
                 {/* Update Product Card */}
-                <Card className="h-full w-2xl">
+                <Card className="h-full w-xl">
                     <CardHeader>
                         <CardTitle className="text-xl">Update Product</CardTitle>
                         <CardDescription>Update product here!</CardDescription>
@@ -132,7 +134,7 @@ const UpdateProductPage = () => {
                     <CardContent>
                         <form onSubmit={updateProduct} className="flex flex-col gap-4">
                             <div className="flex gap-5 max-w-full">
-                                <span className="flex flex-col gap-2 flex-1 min-w-[250px]">
+                                <span className="flex flex-col gap-2 flex-1">
                                     <Label htmlFor="productName">Product Name</Label>
                                     <Input
                                         type="text"
@@ -146,7 +148,7 @@ const UpdateProductPage = () => {
                                     />
                                 </span>
 
-                                <span className="flex flex-col gap-2 flex-1 min-w-[120px]">
+                                <span className="flex flex-col gap-2 flex-1">
                                     <Label htmlFor="productStock">Product Stock</Label>
                                     <Input
                                         type="number"
@@ -160,7 +162,7 @@ const UpdateProductPage = () => {
                                     />
                                 </span>
 
-                                <span className="flex flex-col gap-2 flex-1 min-w-[120px]">
+                                <span className="flex flex-col gap-2 flex-1">
                                     <Label htmlFor="productPrice">Product Price</Label>
                                     <Input
                                         type="number"
@@ -176,7 +178,7 @@ const UpdateProductPage = () => {
                             </div>
 
                             <div className="flex gap-5 max-w-full">
-                                <span className="flex flex-col gap-2 flex-1 min-w-[250px]">
+                                <span className="flex flex-col gap-2 flex-1">
                                     <Label htmlFor="productDescription">Product Description</Label>
                                     <Input
                                         type="text"
@@ -190,7 +192,7 @@ const UpdateProductPage = () => {
                                     />
                                 </span>
 
-                                <span className="flex flex-col gap-2 flex-1 min-w-[250px]">
+                                <span className="flex flex-col gap-2 flex-1">
                                     <Label htmlFor="productImage">Product Image</Label>
                                     <Input
                                         type="file"
@@ -210,22 +212,24 @@ const UpdateProductPage = () => {
                                 </span>
                             </div>
 
-                            {preview ? (
-                                <div className="flex h-50 group justify-center border-2 border-blue-300 rounded-lg p-5">
-                                    <img
-                                        src={preview}
-                                        alt="Preview"
-                                    className="object-contain w-auto h-auto transition-transform duration-300 group-hover:scale-120"
-                                        onError={() => setPreview(null)}
-                                    />
-                                </div>
-                            ) : (
-                                <div className="flex h-50 justify-center items-center border-2 border-blue-300 rounded-lg">
-                                    <p className="text-center p-2 text-sm text-gray-500">
-                                        Here's your selected image preview
-                                    </p>
-                                </div>
-                            )}
+                        <div className="flex group justify-center items-center h-54 border-2 border-blue-300 rounded-lg p-3">
+                                {preview ? (
+                                <div className="relative w-40 aspect-square">
+                                        <img
+                                            src={preview}
+                                            alt="Preview"
+                                            className="object-contain w-auto h-auto transition-transform duration-300 group-hover:scale-120"
+                                            onError={() => setPreview(null)}
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="flex h-50 w-sm justify-center items-center border-2 border-blue-300 rounded-lg">
+                                        <p className="text-center p-2 text-sm text-gray-500">
+                                            Here's your selected image preview
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
 
                             <Button type="submit" className="bg-green-500 hover:bg-green-600">
                                 Update

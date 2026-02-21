@@ -54,7 +54,7 @@ const CustomerProducts = () => {
                 { withCredentials: true }
             );
             setCartCount(data.count);
-        } catch (err) {
+        } catch {
             toast.error("Failed fetching cart count !!");
             setCartCount(0);
         }
@@ -68,8 +68,11 @@ const CustomerProducts = () => {
                 { withCredentials: true } // important for cookie auth
             );
             fetchCartCount();
-        } catch (err) {
-            console.error(err);
+            setAddingToCartId(null);
+            toast.success("Added to cart!");
+        } catch {
+            setAddingToCartId(null);
+            toast.error("Failed to add to cart!");
         }
     };
 
