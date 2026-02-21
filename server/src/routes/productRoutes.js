@@ -2,13 +2,22 @@ import express from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import { createProduct, deleteProduct, getAllProducts, getProductById, updateProduct } from '../controllers/productController.js';
+import {
+    createProduct, 
+    deleteProduct, 
+    getAllProducts, 
+    getProductById, 
+    updateProduct 
+} from '../controllers/productController.js';
 
 const productRouter = express.Router();
 
 // Ensure uploads folder exists
-const uploadsDir = path.join(process.cwd(), 'src', 'uploads');
-if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+const uploadsDir = path.join(process.cwd(), 'uploads');
+
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
 // Multer storage
 const storage = multer.diskStorage({

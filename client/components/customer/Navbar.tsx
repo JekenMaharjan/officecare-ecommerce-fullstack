@@ -22,7 +22,7 @@ export default function Navbar() {
     const fetchCartCount = async () => {
         try {
             const { data } = await axios.get(
-                `${process.env.NEXT_PUBLIC_API_URL}/cart/count`,
+                `${process.env.NEXT_PUBLIC_API_URL}/api/cart/count`,
                 { withCredentials: true }
             );
             setCartCount(data.count);

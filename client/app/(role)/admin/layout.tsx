@@ -9,7 +9,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
 
             <Navbar />
 
-            <main className="flex-1 overflow-auto bg-gradient-to-br from-blue-500 to-purple-500 flex p-10">
+            <main className="flex flex-1 justify-center overflow-auto bg-gradient-to-br from-blue-500 to-purple-500 p-10">
                 {children}
             </main>
 

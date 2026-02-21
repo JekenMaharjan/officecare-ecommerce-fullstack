@@ -39,7 +39,7 @@ const CustomerProducts = () => {
 
     const getAllProducts = async () => {
         try {
-            const { data } = await axios.get(process.env.NEXT_PUBLIC_API_URL + "/products");
+            const { data } = await axios.get(process.env.NEXT_PUBLIC_API_URL + "/api/products");
             setProducts(data);
             setFilteredProducts(data); // Initially show all products
         } catch (error: any) {
@@ -50,7 +50,7 @@ const CustomerProducts = () => {
     const fetchCartCount = async () => {
         try {
             const { data } = await axios.get(
-                `${process.env.NEXT_PUBLIC_API_URL}/cart/count`,
+                `${process.env.NEXT_PUBLIC_API_URL}/api/cart/count`,
                 { withCredentials: true }
             );
             setCartCount(data.count);
@@ -63,7 +63,7 @@ const CustomerProducts = () => {
     const handleAddToCart = async (productId: string) => {
         try {
             await axios.post(
-                `${process.env.NEXT_PUBLIC_API_URL}/cart`,
+                `${process.env.NEXT_PUBLIC_API_URL}/api/cart`,
                 { productId, quantity: 1 },
                 { withCredentials: true } // important for cookie auth
             );
@@ -81,14 +81,14 @@ const CustomerProducts = () => {
     };
 
     return (
-        <div className="min-h-full w-full bg-gray-100/50 p-6 rounded-md">
+        <div className="min-h-full max-w-full bg-gray-100/50 p-6 pt-10 rounded-md">
             <div className="px-5 pb-5 w-full">
-                <h1 className="text-4xl font-bold mb-10 text-center text-gray-800">
+                <h1 className="text-4xl font-bold mb-5 text-center text-gray-800">
                     Our Products
                 </h1>
 
                 {/* Search Bar */}
-                <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-end mb-6">
+                <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-end">
                     <Input
                         type="text"
                         placeholder="Search by product name..."
@@ -103,6 +103,8 @@ const CustomerProducts = () => {
                         Search
                     </Button>
                 </div>
+
+                <hr className="my-5 border-blue-700"/>
 
                 {/* Product Grid */}
                 {filteredProducts && filteredProducts.length > 0 ? (

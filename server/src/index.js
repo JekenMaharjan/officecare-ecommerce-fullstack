@@ -3,6 +3,7 @@ import connect from "./db/connect.js";
 import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import path from "path";
 
 import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
@@ -25,6 +26,9 @@ app.use(
 );
 app.use(express.json());
 app.use(cookieParser());
+
+// Serve uploads folder
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // Routes with proper paths
 app.use("/api/auth", authRouter);

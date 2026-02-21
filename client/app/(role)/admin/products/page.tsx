@@ -66,7 +66,7 @@ const AdminProducts = () => {
 
     const getAllProducts = async () => {
         try {
-            const response = await axios.get(process.env.NEXT_PUBLIC_API_URL + "/products");
+            const response = await axios.get(process.env.NEXT_PUBLIC_API_URL + "/api/products");
             setProducts(response.data);
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Something went wrong");
@@ -87,7 +87,7 @@ const AdminProducts = () => {
                 formData.append("image", image);
             }
 
-            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/products`, formData);
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/products`, formData);
 
             toast.success("Product created successfully !!");
 
@@ -107,7 +107,7 @@ const AdminProducts = () => {
 
     const handleDelete = async (id: string) => {
         try {
-            await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`);
+            await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/products/${id}`);
             toast.success("Product deleted !!");
             getAllProducts();
         } catch (error: any) {
@@ -127,14 +127,14 @@ const AdminProducts = () => {
     }
 
     return (
-        <div className="min-h-full w-full bg-gray-100/50 p-6 rounded-md">
-            <div className="px-5 pb-5 w-full">
-                <h1 className="text-4xl font-bold mb-10 text-center text-gray-800">
+        <div className="min-h-full w-7xl bg-gray-100/50 p-6 rounded-md">
+            <div className="px-5 pb-5 w-full pt-5">
+                <h1 className="text-4xl font-bold mb-5 text-center text-gray-800">
                     Admin Panel
                 </h1>
 
                 {/* Search Bar */}
-                <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-end mb-6">
+                <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-end">
                     <Input
                         type="text"
                         placeholder="Search by product name..."
@@ -149,6 +149,8 @@ const AdminProducts = () => {
                         Search
                     </Button>
                 </div>
+
+                <hr className="my-5 border-blue-700" />
 
                 <div className="flex justify-end mb-5">
                     <Dialog open={open} onOpenChange={setOpen}>
