@@ -5,17 +5,37 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import path from "path";
 
+import seedAdmin from "./seedAdmin.js";
 import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import productRouter from "./routes/productRoutes.js";
 import cartRouter from "./routes/cartRoutes.js";
+import orderRouter from "./routes/orderRoutes.js";
 
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Connect to DB
-connect();
+// Connect to DB and start server
+const startServer = async () => {
+    try {
+        await connect();
+        console.log("DB Connected");
+
+        await seedAdmin();
+
+        // Start server
+        app.listen(port, () => {
+            console.log(`Server running on port ${port}`);
+        });
+
+    } catch (error) {
+        console.error(error);
+        process.exit(1);
+    }
+};
+
+startServer();
 
 // Middleware
 app.use(
@@ -35,6 +55,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/products", productRouter);
 app.use("/api/cart", cartRouter);
+app.use("/api/orders", orderRouter);
 
 // Root test route
 app.get("/", (req, res) => {
@@ -42,7 +63,3 @@ app.get("/", (req, res) => {
     res.send("Server is working!");
 });
 
-// Start server
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-});

@@ -28,28 +28,10 @@ export const registerNewUser = async (req, res) => {
     }
 };
 
-// Signin
+// Signin 
 export const signinUser = async (req, res) => {
     try {
         const { email, password } = req.body;
-
-        // Admin login check
-        if (email === "admin@gmail.com" && password === "admin@123") {
-            const token = jwt.sign({ email, role: "admin" }, process.env.JWT_SECRET, { expiresIn: "7d" });
-
-            res.cookie("token", token, {
-                httpOnly: true,
-                secure: false,      // true if using HTTPS
-                sameSite: "lax",    // or "none" if frontend is on different domain + HTTPS
-                maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-            });
-
-            return res.json({
-                message: "Admin logged in successfully!",
-                user: { email, role: "admin" },
-                isLoggedIn: true,
-            });
-        }
 
         // Regular user
         const user = await User.findOne({ email });
@@ -58,13 +40,17 @@ export const signinUser = async (req, res) => {
         const isMatched = await bcrypt.compare(password, user.password);
         if (!isMatched) return res.status(400).json({ message: "Invalid password!" });
 
-        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "7d" });
+        const token = jwt.sign(
+            { id: user._id, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: "1d" });
 
         res.cookie("token", token, {
             httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+            secure: process.env.NODE_ENV === "production", // true only in prod
+            // sameSite: "strict",
+            sameSite: "lax", // better than "strict" for local dev
+            maxAge: 24 * 60 * 60 * 1000,
         });
 
         return res.json({

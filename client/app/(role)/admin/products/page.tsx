@@ -50,7 +50,7 @@ const AdminProducts = () => {
     const [image, setImage] = useState<File | null>(null);
     const [open, setOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
-        const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+    const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
     useEffect(() => {
         getAllProducts();
@@ -66,7 +66,10 @@ const AdminProducts = () => {
 
     const getAllProducts = async () => {
         try {
-            const response = await axios.get(process.env.NEXT_PUBLIC_API_URL + "/api/products");
+            const response = await axios.get(
+                process.env.NEXT_PUBLIC_API_URL + "/api/products",
+                { withCredentials: true }
+            );
             setProducts(response.data);
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Something went wrong");
@@ -271,7 +274,7 @@ const AdminProducts = () => {
                                             : <FaCircleXmark className="text-red-600 bg-white rounded-full"/>
                                             }
                                         </TableCell>
-                                        <TableCell className="text-center">{product.price}</TableCell>
+                                        <TableCell className="text-center">{(product.price).toLocaleString("en-IN")}</TableCell>
                                         <TableCell className="flex justify-center gap-5">
                                             <Button
                                                 onClick={() => router.push(`/admin/products/${product._id}`)}

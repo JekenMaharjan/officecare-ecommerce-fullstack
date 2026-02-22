@@ -16,8 +16,17 @@ export default function Navbar() {
     const router = useRouter();
 
     useEffect(() => {
+        // Call immediately on mount
         fetchCartCount();
-    }, []);
+
+        // Set interval to call every 5 seconds (5000ms)
+        const interval = setInterval(() => {
+            fetchCartCount();
+        }, 100);
+
+        // Cleanup on unmount
+        return () => clearInterval(interval);
+    }, []); // empty dependency array so it runs once on mount
 
     const fetchCartCount = async () => {
         try {
