@@ -6,6 +6,14 @@ import { toast } from "sonner";
 import { Card, CardContent, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 
 type Product = {
     _id: string;
@@ -131,6 +139,13 @@ const CustomerCart = () => {
         }
     };
 
+    const totalAmount = cartItems.reduce(
+        (acc, item) => acc + item.price * item.quantityInCart,
+        0
+    );
+
+// ======================================================================================================================
+
     return (
         <div className="min-h-full w-6xl bg-gray-100/50 p-6 rounded-md mx-auto">
             <h1 className="text-4xl font-bold text-center mb-6">Your Cart</h1>
@@ -153,7 +168,7 @@ const CustomerCart = () => {
                                     />
                                 </div>
 
-                                <div className="flex flex-col gap-2 w-sm">
+                                <div className="flex flex-col gap-2 lg:w-sm sm:w-20">
                                     <CardTitle className="text-xl font-semibold">{item.name}</CardTitle>
                                     <CardDescription className="text-sm text-gray-600 line-clamp-2">{item.description}</CardDescription>
                                 </div>
@@ -175,10 +190,6 @@ const CustomerCart = () => {
                                         </Button>
                                     </div>
 
-                                    <Button className="bg-yellow-500 hover:bg-yellow-600">
-                                        Checkout
-                                    </Button>
-
                                     <Button
                                         onClick={() => handleRemoveFromCart(item._id, item.quantityInCart)}
                                         disabled={removingId === item._id}
@@ -192,6 +203,70 @@ const CustomerCart = () => {
                     ))}
                 </div>
             )}
+
+            {/* Checkout Cart */}
+            <div className="mt-8 flex justify-end">
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <Button
+                            disabled={cartItems.length === 0}
+                            className="bg-yellow-500 hover:bg-yellow-600 px-8"
+                        >
+                            Proceed to Checkout
+                        </Button>
+                    </DialogTrigger>
+
+                    <DialogContent className="max-w-lg">
+                        <DialogHeader>
+                            <DialogTitle>Checkout</DialogTitle>
+                            <DialogDescription>
+                                Please confirm your order details.
+                            </DialogDescription>
+                        </DialogHeader>
+
+                        {/* Order Summary */}
+                        <div className="space-y-3 mt-4">
+                            {cartItems.map(item => (
+                                <div key={item._id} className="flex justify-between text-sm">
+                                    <span className="w-xs">{item.name} (x{item.quantityInCart})</span>
+                                    <span>Rs. {item.price * item.quantityInCart}</span>
+                                </div>
+                            ))}
+
+                            <div className="border-t pt-3 flex justify-between font-semibold">
+                                <span>Total</span>
+                                <span>Rs. {totalAmount}</span>
+                            </div>
+                        </div>
+
+                        {/* Shipping Form */}
+                        <div className="mt-6 space-y-3">
+                            <input
+                                type="text"
+                                placeholder="Full Name"
+                                className="w-full border rounded p-2"
+                            />
+                            <input
+                                type="text"
+                                placeholder="Phone Number"
+                                className="w-full border rounded p-2"
+                            />
+                            <textarea
+                                placeholder="Delivery Address"
+                                className="w-full border rounded p-2"
+                            />
+                        </div>
+
+                        {/* Confirm Button */}
+                        <Button
+                            className="w-full mt-6 bg-green-600 hover:bg-green-700"
+                            onClick={() => toast.success("Order placed successfully!")}
+                        >
+                            Confirm Order
+                        </Button>
+                    </DialogContent>
+                </Dialog>
+            </div>
 
             <p className="mt-6 text-right font-semibold text-gray-800 text-md mr-2">
                 Total Items: {cartCount}

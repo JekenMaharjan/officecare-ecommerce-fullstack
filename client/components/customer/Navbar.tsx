@@ -22,7 +22,7 @@ export default function Navbar() {
         // Set interval to call every 5 seconds (5000ms)
         const interval = setInterval(() => {
             fetchCartCount();
-        }, 5000);
+        }, 100);
 
         // Cleanup on unmount
         return () => clearInterval(interval);
