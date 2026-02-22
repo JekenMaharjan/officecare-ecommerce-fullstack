@@ -50,7 +50,7 @@ const AdminProducts = () => {
     const [image, setImage] = useState<File | null>(null);
     const [open, setOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
-        const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+    const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
     useEffect(() => {
         getAllProducts();
@@ -274,7 +274,7 @@ const AdminProducts = () => {
                                             : <FaCircleXmark className="text-red-600 bg-white rounded-full"/>
                                             }
                                         </TableCell>
-                                        <TableCell className="text-center">{product.price}</TableCell>
+                                        <TableCell className="text-center">{(product.price).toLocaleString("en-IN")}</TableCell>
                                         <TableCell className="flex justify-center gap-5">
                                             <Button
                                                 onClick={() => router.push(`/admin/products/${product._id}`)}

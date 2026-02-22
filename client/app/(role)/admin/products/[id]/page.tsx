@@ -6,6 +6,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import {
     Card,
     CardContent,
@@ -123,7 +124,7 @@ const UpdateProductPage = () => {
                             <p className="line-clamp-2 text-sm"><strong className="font-medium">Name:</strong> {product?.name}</p>
                             <p className="line-clamp-3 text-sm"><strong className="font-medium">Description:</strong> {product?.description}</p>
                             <p className="line-clamp-1 text-sm"><strong className="font-medium">Stock:</strong> {product?.stock}</p>
-                            <p className="line-clamp-1 text-sm"><strong className="font-medium">Price:</strong> Rs. {product?.price}</p>
+                        <p className="line-clamp-1 text-sm"><strong className="font-medium">Price:</strong> Rs. {(product?.price).toLocaleString("en-IN")}</p>
                         </div>
                     </CardContent>
                 </Card>
@@ -164,55 +165,56 @@ const UpdateProductPage = () => {
                                         required
                                     />
                                 </span>
-
-                                <span className="flex flex-col gap-2 flex-1">
-                                    <Label htmlFor="productPrice">Product Price</Label>
-                                    <Input
-                                        type="number"
-                                        value={price}
-                                        id="productPrice"
-                                        name="productPrice"
-                                        className="text-gray-500 border-gray-500"
-                                        onChange={(e) => setPrice(e.target.value)}
-                                        placeholder="Price"
-                                        required
-                                    />
-                                </span>
                             </div>
 
                             <div className="flex gap-5 max-w-full">
                                 <span className="flex flex-col gap-2 flex-1">
                                     <Label htmlFor="productDescription">Product Description</Label>
-                                    <Input
-                                        type="text"
-                                        value={description}
+                                    <Textarea
                                         id="productDescription"
                                         name="productDescription"
+                                        value={description}
                                         onChange={(e) => setDescription(e.target.value)}
                                         placeholder="Description"
-                                        className="text-gray-500 border-gray-500"
+                                        className="text-gray-500 border-gray-500 min-h-[110px]"
                                         required
                                     />
                                 </span>
 
-                                <span className="flex flex-col gap-2 flex-1">
-                                    <Label htmlFor="productImage">Product Image</Label>
-                                    <Input
-                                        type="file"
-                                        id="productImage"
-                                        name="productImage"
-                                        className="border-gray-500"
-                                        accept="image/*"
-                                        onChange={(e) => {
-                                            const file = e.target.files?.[0];
-                                            if (!file) return;
-                                            setImage(file);
-                                            // create preview safely
-                                            const objectUrl = URL.createObjectURL(file);
-                                            setPreview(objectUrl);
-                                        }}
-                                    />
-                                </span>
+                                <div className="flex flex-col gap-4 w-63">
+                                    <span className="flex flex-col gap-2 flex-1">
+                                        <Label htmlFor="productPrice">Product Price</Label>
+                                        <Input
+                                            type="number"
+                                            value={price}
+                                            id="productPrice"
+                                            name="productPrice"
+                                            className="text-gray-500 border-gray-500"
+                                            onChange={(e) => setPrice(e.target.value)}
+                                            placeholder="Price"
+                                            required
+                                        />
+                                    </span>
+
+                                    <span className="flex flex-col gap-2 flex-1">
+                                        <Label htmlFor="productImage">Product Image</Label>
+                                        <Input
+                                            type="file"
+                                            id="productImage"
+                                            name="productImage"
+                                            className="border-gray-500"
+                                            accept="image/*"
+                                            onChange={(e) => {
+                                                const file = e.target.files?.[0];
+                                                if (!file) return;
+                                                setImage(file);
+                                                // create preview safely
+                                                const objectUrl = URL.createObjectURL(file);
+                                                setPreview(objectUrl);
+                                            }}
+                                        />
+                                    </span>
+                                </div>
                             </div>
 
                         <div className="flex group justify-center items-center h-54 border-2 border-blue-300 rounded-lg p-3">

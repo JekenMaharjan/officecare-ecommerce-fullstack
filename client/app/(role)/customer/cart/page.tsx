@@ -26,6 +26,11 @@ type Product = {
 };
 
 const CustomerCart = () => {
+    const [fullName, setFullName] = useState("");
+    const [phone, setPhone] = useState("");
+    const [address, setAddress] = useState("");
+    const [placingOrder, setPlacingOrder] = useState(false);
+
     const [cartItems, setCartItems] = useState<Product[]>([]);
     const [cartCount, setCartCount] = useState(0);
     const [removingId, setRemovingId] = useState<string | null>(null);
@@ -35,6 +40,7 @@ const CustomerCart = () => {
         fetchCartCount();
     }, []);
 
+    // Fetch all cart items
     const fetchCartItems = async () => {
         try {
             const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/cart/items`, { withCredentials: true });
@@ -55,6 +61,7 @@ const CustomerCart = () => {
         }
     };
 
+    // Fetch count of cart
     const fetchCartCount = async () => {
         try {
             const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/cart/count`, { withCredentials: true });
@@ -139,10 +146,55 @@ const CustomerCart = () => {
         }
     };
 
+    // Calculate total amount of the all products to the cart
     const totalAmount = cartItems.reduce(
         (acc, item) => acc + item.price * item.quantityInCart,
         0
     );
+
+    // Handle place order
+    const handlePlaceOrder = async () => {
+        if (!fullName.trim() || !phone.trim() || !address.trim()) {
+            toast.error("Please fill all fields");
+            return;
+        }
+
+        if (cartItems.length === 0) {
+            toast.error("Cart is empty");
+            return;
+        }
+
+        try {
+            setPlacingOrder(true);
+
+            await axios.post(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/orders/createOrder`,
+                {
+                    fullName: fullName.trim(),
+                    phone: phone.trim(),
+                    shippingAddress: address.trim(),
+                },
+                { withCredentials: true }
+            );
+
+            toast.success("Order placed successfully!");
+
+            // Reset everything properly
+            setFullName("");
+            setPhone("");
+            setAddress("");
+
+            await fetchCartItems();
+            await fetchCartCount();
+
+        } catch (error: any) {
+            toast.error(
+                error.response?.data?.message || "Failed to place order"
+            );
+        } finally {
+            setPlacingOrder(false);
+        }
+    };
 
 // ======================================================================================================================
 
@@ -164,6 +216,7 @@ const CustomerCart = () => {
                                         height={170}
                                         width={170}
                                         unoptimized
+                                        loading="eager"
                                         className="object-contain w-auto h-auto"
                                     />
                                 </div>
@@ -173,11 +226,11 @@ const CustomerCart = () => {
                                     <CardDescription className="text-sm text-gray-600 line-clamp-2">{item.description}</CardDescription>
                                 </div>
 
-                                <p className="font-semibold text-center text-blue-600 w-25">Rs. {item.price}</p>
+                                <p className="font-semibold text-center text-blue-600 w-25">Rs. {item.price.toLocaleString("en-IN")}</p>
 
                                 <div className="w-30 text-center">
                                     <p className="font-semibold">Quantity: {item.quantityInCart}</p>
-                                    <p className="text-sm mt-2"><strong>Total:</strong> Rs. {item.quantityInCart * item.price}</p>
+                                    <p className="text-sm mt-2"><strong>Total:</strong> Rs. {(item.quantityInCart * item.price).toLocaleString("en-IN")}</p>
                                 </div>
 
                                 <div className="flex flex-col gap-3">
@@ -229,13 +282,13 @@ const CustomerCart = () => {
                             {cartItems.map(item => (
                                 <div key={item._id} className="flex justify-between text-sm">
                                     <span className="w-xs">{item.name} (x{item.quantityInCart})</span>
-                                    <span>Rs. {item.price * item.quantityInCart}</span>
+                                    <span>Rs. {(item.price * item.quantityInCart).toLocaleString("en-IN")}</span>
                                 </div>
                             ))}
 
                             <div className="border-t pt-3 flex justify-between font-semibold">
                                 <span>Total</span>
-                                <span>Rs. {totalAmount}</span>
+                                <span>Rs. {totalAmount.toLocaleString("en-IN")}</span>
                             </div>
                         </div>
 
@@ -244,15 +297,23 @@ const CustomerCart = () => {
                             <input
                                 type="text"
                                 placeholder="Full Name"
+                                value={fullName}
+                                onChange={(e) => setFullName(e.target.value)}
                                 className="w-full border rounded p-2"
                             />
+
                             <input
                                 type="text"
                                 placeholder="Phone Number"
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
                                 className="w-full border rounded p-2"
                             />
+
                             <textarea
                                 placeholder="Delivery Address"
+                                value={address}
+                                onChange={(e) => setAddress(e.target.value)}
                                 className="w-full border rounded p-2"
                             />
                         </div>
@@ -260,9 +321,10 @@ const CustomerCart = () => {
                         {/* Confirm Button */}
                         <Button
                             className="w-full mt-6 bg-green-600 hover:bg-green-700"
-                            onClick={() => toast.success("Order placed successfully!")}
+                            onClick={handlePlaceOrder}
+                            disabled={placingOrder}
                         >
-                            Confirm Order
+                            {placingOrder ? "Placing Order..." : "Confirm Order"}
                         </Button>
                     </DialogContent>
                 </Dialog>

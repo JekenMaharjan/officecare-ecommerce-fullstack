@@ -158,7 +158,7 @@ const CustomerProducts = () => {
                                 <CardTitle className="text-xl font-semibold line-clamp-1 mt-2">{product.name}</CardTitle>
                                 <CardDescription className="text-sm text-gray-600 line-clamp-2">{product.description}</CardDescription>
                                 <p className="mt-1 text-sm font-semibold text-gray-800">Stock: {product.stock}</p>
-                                <p className="mt-1 font-semibold text-lg text-blue-600">Rs. {product.price}</p>
+                                <p className="mt-1 font-semibold text-lg text-blue-600">Rs. {(product.price).toLocaleString("en-IN")}</p>
                             </CardContent>
 
                             <CardFooter className="flex justify-center mt-3 min-w-full p-0">

@@ -32,8 +32,8 @@ export default function Navbar() {
                     <Link className="font-semibold text-lg hover:text-blue-400" href="/admin/products">
                         Products
                     </Link>
-                    <Link className="font-semibold text-lg hover:text-blue-400" href="/admin/cart">
-                        Cart
+                    <Link className="font-semibold text-lg hover:text-blue-400" href="/admin/orders">
+                        Orders
                     </Link>
 
                     <Button
