@@ -9,6 +9,7 @@ import {
     getProductById, 
     updateProduct 
 } from '../controllers/productController.js';
+import { authMiddleware, authorize } from '../middlewares/auth.js';
 
 const productRouter = express.Router();
 
@@ -28,10 +29,20 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Product routes
-productRouter.post('/', upload.single('image'), createProduct);   // POST /api/products
-productRouter.get('/', getAllProducts);                           // GET /api/products
-productRouter.get('/:id', getProductById);                        // GET /api/products/:id
-productRouter.delete('/:id', deleteProduct);                      // DELETE /api/products/:id
-productRouter.put('/:id', upload.single('image'), updateProduct); // PUT /api/products/:id
+
+// CREATE product → admin only
+productRouter.post('/', authMiddleware, authorize("admin"), upload.single('image'), createProduct);
+
+// READ all products → admin + customer
+productRouter.get('/', authMiddleware, authorize("admin", "customer"), getAllProducts);
+
+// READ single product → admin + customer
+productRouter.get('/:id', authMiddleware, authorize("admin", "customer"), getProductById);
+
+// DELETE product → admin only
+productRouter.delete('/:id', authMiddleware, authorize("admin"), deleteProduct);
+
+// UPDATE product → admin only
+productRouter.put('/:id', authMiddleware, authorize("admin"), upload.single('image'), updateProduct);
 
 export default productRouter;

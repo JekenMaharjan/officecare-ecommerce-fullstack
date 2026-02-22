@@ -66,7 +66,9 @@ const AdminProducts = () => {
 
     const getAllProducts = async () => {
         try {
-            const response = await axios.get(process.env.NEXT_PUBLIC_API_URL + "/api/products");
+            const response = await axios.get(process.env.NEXT_PUBLIC_API_URL + "/api/products", {
+                withCredentials: true
+            });
             setProducts(response.data);
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Something went wrong");

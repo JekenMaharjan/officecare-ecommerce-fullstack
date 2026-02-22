@@ -10,7 +10,7 @@ export const authMiddleware = (req, res, next) => {
 
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            req.user = decoded;
+            req.user = decoded; // attach user info
             next();
         } catch (error) {
             if (error.name === "TokenExpiredError") {
@@ -29,4 +29,13 @@ export const adminMiddleware = (req, res, next) => {
         return res.status(403).json({ message: "Forbidden: Admins only" });
     }
     next();
+};
+
+export const authorize = (...roles) => {
+    return (req, res, next) => {
+        if (!roles.includes(req.user.role)) {
+            return res.status(403).json({ message: "Access denied" });
+        }
+        next();
+    };
 };

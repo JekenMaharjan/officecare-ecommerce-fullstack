@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import path from "path";
 
+import seedAdmin from "./seedAdmin.js";
 import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import productRouter from "./routes/productRoutes.js";
@@ -14,8 +15,26 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Connect to DB
-connect();
+// Connect to DB and start server
+const startServer = async () => {
+    try {
+        await connect();
+        console.log("DB Connected");
+
+        await seedAdmin();
+
+        // Start server
+        app.listen(port, () => {
+            console.log(`Server running on port ${port}`);
+        });
+
+    } catch (error) {
+        console.error(error);
+        process.exit(1);
+    }
+};
+
+startServer();
 
 // Middleware
 app.use(
@@ -42,7 +61,3 @@ app.get("/", (req, res) => {
     res.send("Server is working!");
 });
 
-// Start server
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-});
