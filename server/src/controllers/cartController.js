@@ -85,6 +85,41 @@ export const getCartItems = async (req, res) => {
 
 // ===============================================================================================
 
+// Decrease quantity by 1
+export const removeOneFromCart = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { productId } = req.body;
+
+        const cart = await Cart.findOne({ user: userId });
+        if (!cart) return res.status(404).json({ message: "Cart not found" });
+
+        const itemIndex = cart.items.findIndex(item => item.product.toString() === productId);
+
+        if (itemIndex === -1) return res.status(404).json({ message: "Product not in cart" });
+
+        // Decrease quantity by 1
+        cart.items[itemIndex].quantity -= 1;
+
+        // Remove if quantity <= 0
+        if (cart.items[itemIndex].quantity <= 0) {
+            cart.items.splice(itemIndex, 1);
+        }
+
+        await cart.save();
+
+        // Optional: increase product stock
+        await Product.findByIdAndUpdate(productId, { $inc: { stock: 1 } });
+
+        res.status(200).json(cart);
+    } catch (error) {
+        console.error("Remove one from cart error:", error);
+        res.status(500).json({ message: "Failed to remove one from cart" });
+    }
+};
+
+// ===============================================================================================
+
 // Remove a product from cart
 export const removeFromCart = async (req, res) => {
     try {

@@ -5,6 +5,7 @@ import {
     getCartCount,
     getCartItems,
     removeFromCart,
+    removeOneFromCart,
 } from "../controllers/cartController.js";
 
 const cartRouter = express.Router();
@@ -16,5 +17,6 @@ cartRouter.get("/count", getCartCount); // Get cart count
 cartRouter.post("/", addToCart);           // Add product
 cartRouter.get("/items", getCartItems);         // Get cart details
 cartRouter.delete("/", removeFromCart);    // Remove product
+cartRouter.delete("/remove", removeOneFromCart);    // Remove product
 
 export default cartRouter;
