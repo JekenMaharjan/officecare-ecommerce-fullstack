@@ -14,7 +14,7 @@ cartRouter.use(authMiddleware); // protect all cart routes
 cartRouter.get("/count", getCartCount); // Get cart count
 
 cartRouter.post("/", addToCart);           // Add product
-cartRouter.get("/", getCartItems);         // Get cart details
+cartRouter.get("/items", getCartItems);         // Get cart details
 cartRouter.delete("/", removeFromCart);    // Remove product
 
 export default cartRouter;

@@ -47,8 +47,9 @@ export const signinUser = async (req, res) => {
 
         res.cookie("token", token, {
             httpOnly: true,
-            secure: true, // true in production
-            sameSite: "strict",
+            secure: process.env.NODE_ENV === "production", // true only in prod
+            // sameSite: "strict",
+            sameSite: "lax", // better than "strict" for local dev
             maxAge: 24 * 60 * 60 * 1000,
         });
 

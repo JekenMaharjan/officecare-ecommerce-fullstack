@@ -39,7 +39,10 @@ const CustomerProducts = () => {
 
     const getAllProducts = async () => {
         try {
-            const { data } = await axios.get(process.env.NEXT_PUBLIC_API_URL + "/api/products");
+            const { data } = await axios.get(
+                process.env.NEXT_PUBLIC_API_URL + "/api/products",
+                { withCredentials: true }
+            );
             setProducts(data);
             setFilteredProducts(data);
         } catch (error: any) {
@@ -49,9 +52,10 @@ const CustomerProducts = () => {
 
     const fetchCartCount = async () => {
         try {
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/cart/count`, {
-                withCredentials: true
-            });
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/cart/count`,
+                { withCredentials: true }
+            );
+            
             setCartCount(data.count);
         } catch {
             toast.error("Failed fetching cart count !!");
@@ -61,16 +65,29 @@ const CustomerProducts = () => {
 
     const handleAddToCart = async (productId: string) => {
         try {
-            await axios.post(
+            setAddingToCartId(productId);
+            setCartCount(prev => prev + 1); // update immediately
+
+            const { data } = await axios.post(
                 `${process.env.NEXT_PUBLIC_API_URL}/api/cart`,
                 { productId, quantity: 1 },
-                { withCredentials: true } // important for cookie auth
+                { withCredentials: true }
             );
-            fetchCartCount();
+
+            // Update product stock in UI
+            setProducts(prev =>
+                prev.map(product =>
+                    product._id === productId
+                        ? { ...product, stock: data.updatedStock }
+                        : product
+                )
+            );
+
             setAddingToCartId(null);
             toast.success("Added to cart!");
         } catch {
             setAddingToCartId(null);
+            setCartCount(prev => prev - 1); // revert if failed
             toast.error("Failed to add to cart!");
         }
     };

@@ -49,7 +49,10 @@ const UpdateProductPage = () => {
     // Get products detail from db
     const getProduct = async () => {
         try {
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/products/${id}`);
+            const { data } = await axios.get(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/products/${id}`,
+                { withCredentials: true }
+            );
 
             setProduct(data);
             setName(data.name);

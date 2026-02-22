@@ -28,9 +28,14 @@ const SignIn = () => {
         validationSchema,
         onSubmit: async (values) => {
             try {
-                const res = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/api/auth/signin", values);
+                const res = await axios.post(
+                    process.env.NEXT_PUBLIC_API_URL + "/api/auth/signin",
+                    values, 
+                    { withCredentials: true }
+                );
+                
                 const { token, user } = res.data;
-                localStorage.setItem("token", token);
+                // localStorage.setItem("token", token);
                 localStorage.setItem("role", user.role);
 
                 if (user.role === "admin") {
