@@ -78,16 +78,14 @@ const CustomerCart = () => {
     };
 
     // Remove just 1 quantity of a product
-    const handleRemoveOne = async (productId: string) => {
+    const handleDecreaseOne = async (productId: string) => {
         try {
-            setRemovingId(productId);
+            await axios.patch(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/cart/quantity`,
+                { productId, action: "decrease" },
+                { withCredentials: true }
+            );
 
-            await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/cart/remove`, {
-                data: { productId },
-                withCredentials: true
-            });
-
-            // Update UI
             setCartItems(prev =>
                 prev
                     .map(item =>
@@ -99,16 +97,39 @@ const CustomerCart = () => {
             );
 
             setCartCount(prev => prev - 1);
-            toast.success("Removed 1 item from cart!");
-        } catch (error) {
-            console.error(error);
-            toast.error("Failed to remove 1 item!");
+
+        } catch {
+            toast.error("Failed to decrease item");
+        }
+    };
+
+    // Add just 1 quantity of a product
+    const handleAddOne = async (productId: string) => {
+        try {
+            setRemovingId(productId);
+
+            await axios.patch(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/cart/quantity`,
+                { productId, action: "increase" },
+                { withCredentials: true }
+            );
+
+            setCartItems(prev =>
+                prev.map(item =>
+                    item._id === productId
+                        ? { ...item, quantityInCart: item.quantityInCart + 1 }
+                        : item
+                )
+            );
+
+            setCartCount(prev => prev + 1);
+
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "Failed to add item!");
         } finally {
             setRemovingId(null);
         }
     };
-
-    
 
     return (
         <div className="min-h-full w-6xl bg-gray-100/50 p-6 rounded-md mx-auto">
@@ -139,17 +160,17 @@ const CustomerCart = () => {
 
                                 <p className="font-semibold text-center text-blue-600 w-25">Rs. {item.price}</p>
 
-                                <div className="w-30 mt-7 text-center">
+                                <div className="w-30 text-center">
                                     <p className="font-semibold">Quantity: {item.quantityInCart}</p>
                                     <p className="text-sm mt-2"><strong>Total:</strong> Rs. {item.quantityInCart * item.price}</p>
                                 </div>
 
                                 <div className="flex flex-col gap-3">
-                                    <div className="flex justify-between gap-5">
-                                        <Button onClick={() => handleAddOne(item._id)} className="w-15 text-xl bg-green-500 hover:bg-green-600">
+                                    <div className="flex justify-between">
+                                        <Button onClick={() => handleAddOne(item._id)} className="w-17 text-xl bg-green-500 hover:bg-green-600">
                                             +
                                         </Button>
-                                        <Button onClick={() => handleRemoveOne(item._id)} className="w-15 text-xl bg-red-500 hover:bg-red-600">
+                                        <Button onClick={() => handleDecreaseOne(item._id)} className="w-17 text-xl bg-red-500 hover:bg-red-600">
                                             -
                                         </Button>
                                     </div>

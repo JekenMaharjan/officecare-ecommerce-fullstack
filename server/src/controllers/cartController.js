@@ -85,36 +85,51 @@ export const getCartItems = async (req, res) => {
 
 // ===============================================================================================
 
-// Decrease quantity by 1
-export const removeOneFromCart = async (req, res) => {
+export const updateCartQuantity = async (req, res) => {
     try {
         const userId = req.user.id;
-        const { productId } = req.body;
+        const { productId, action } = req.body;
 
         const cart = await Cart.findOne({ user: userId });
         if (!cart) return res.status(404).json({ message: "Cart not found" });
 
-        const itemIndex = cart.items.findIndex(item => item.product.toString() === productId);
+        const item = cart.items.find(
+            i => i.product.toString() === productId
+        );
 
-        if (itemIndex === -1) return res.status(404).json({ message: "Product not in cart" });
+        if (!item) return res.status(404).json({ message: "Item not found" });
 
-        // Decrease quantity by 1
-        cart.items[itemIndex].quantity -= 1;
+        if (action === "increase") {
+            const product = await Product.findById(productId);
 
-        // Remove if quantity <= 0
-        if (cart.items[itemIndex].quantity <= 0) {
-            cart.items.splice(itemIndex, 1);
+            if (!product || product.stock <= 0)
+                return res.status(400).json({ message: "Out of stock" });
+
+            item.quantity += 1;
+            product.stock -= 1;
+            await product.save();
+        }
+
+        if (action === "decrease") {
+            item.quantity -= 1;
+
+            await Product.findByIdAndUpdate(productId, {
+                $inc: { stock: 1 }
+            });
+
+            if (item.quantity <= 0) {
+                cart.items = cart.items.filter(
+                    i => i.product.toString() !== productId
+                );
+            }
         }
 
         await cart.save();
 
-        // Optional: increase product stock
-        await Product.findByIdAndUpdate(productId, { $inc: { stock: 1 } });
-
         res.status(200).json(cart);
+
     } catch (error) {
-        console.error("Remove one from cart error:", error);
-        res.status(500).json({ message: "Failed to remove one from cart" });
+        res.status(500).json({ message: "Failed to update quantity" });
     }
 };
 
