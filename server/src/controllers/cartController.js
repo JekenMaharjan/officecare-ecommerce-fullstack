@@ -1,7 +1,51 @@
 import Cart from "../models/cart.js";
 import Product from "../models/product.js";
 
-// Add a product to cart
+// ====================================================================================================
+
+// GET: Get cart count
+// GET: Get all cart items
+// POST: Add a product to cart
+// PATCH: Update cart quantity
+// DELETE: Remove a product from cart
+
+// ====================================================================================================
+
+// GET: Get cart count
+export const getCartCount = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const cart = await Cart.findOne({ user: userId });
+
+        const count = cart
+            ? cart.items.reduce((acc, item) => acc + item.quantity, 0)
+            : 0;
+
+        res.status(200).json({ count });
+    } catch (error) {
+        console.error("Cart count error:", error);
+        res.status(500).json({ count: 0 });
+    }
+};
+
+// ====================================================================================================
+
+// GET: Get all cart items
+export const getCartItems = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const cart = await Cart.findOne({ user: userId }).populate("items.product");
+
+        res.status(200).json(cart || { items: [] });
+    } catch (error) {
+        console.error("Get cart items error:", error);
+        res.status(500).json({ items: [] });
+    }
+};
+
+// ====================================================================================================
+
+// POST: Add a product to cart
 export const addToCart = async (req, res) => {
     try {
         const userId = req.user.id;
@@ -51,40 +95,9 @@ export const addToCart = async (req, res) => {
     }
 };
 
-// ====================================================================================================
-
-// Get cart count
-export const getCartCount = async (req, res) => {
-    try {
-        const userId = req.user.id;
-        const cart = await Cart.findOne({ user: userId });
-
-        const count = cart
-            ? cart.items.reduce((acc, item) => acc + item.quantity, 0)
-            : 0;
-
-        res.status(200).json({ count });
-    } catch (error) {
-        console.error("Cart count error:", error);
-        res.status(500).json({ count: 0 });
-    }
-};
-
-// Get all cart items
-export const getCartItems = async (req, res) => {
-    try {
-        const userId = req.user.id;
-        const cart = await Cart.findOne({ user: userId }).populate("items.product");
-
-        res.status(200).json(cart || { items: [] });
-    } catch (error) {
-        console.error("Get cart items error:", error);
-        res.status(500).json({ items: [] });
-    }
-};
-
 // ===============================================================================================
 
+// PATCH: Update cart quantity
 export const updateCartQuantity = async (req, res) => {
     try {
         const userId = req.user.id;
@@ -135,7 +148,7 @@ export const updateCartQuantity = async (req, res) => {
 
 // ===============================================================================================
 
-// Remove a product from cart
+// DELETE: Remove a product from cart
 export const removeFromCart = async (req, res) => {
     try {
         const userId = req.user.id;
@@ -161,3 +174,5 @@ export const removeFromCart = async (req, res) => {
         res.status(500).json({ message: "Failed to remove from cart" });
     }
 };
+
+// ====================================================================================================

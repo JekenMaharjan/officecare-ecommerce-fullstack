@@ -16,19 +16,19 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
+// ================================================================================
+
 // Connect to DB and start server
 const startServer = async () => {
     try {
         await connect();
         console.log("DB Connected");
-
         await seedAdmin();
-
+        
         // Start server
         app.listen(port, () => {
             console.log(`Server running on port ${port}`);
         });
-
     } catch (error) {
         console.error(error);
         process.exit(1);
@@ -36,6 +36,8 @@ const startServer = async () => {
 };
 
 startServer();
+
+// ================================================================================
 
 // Middleware
 app.use(
@@ -47,8 +49,12 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+// ================================================================================
+
 // Serve uploads folder
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
+// ================================================================================
 
 // Routes with proper paths
 app.use("/api/auth", authRouter);
@@ -56,6 +62,8 @@ app.use("/api/users", userRouter);
 app.use("/api/products", productRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/orders", orderRouter);
+
+// ================================================================================
 
 // Root test route
 app.get("/", (req, res) => {

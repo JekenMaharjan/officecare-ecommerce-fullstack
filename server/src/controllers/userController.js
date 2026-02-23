@@ -1,5 +1,12 @@
 import User from '../models/user.js';
 
+// ===========================================================================================
+
+// GET: Get all users
+
+// ===========================================================================================
+
+// GET: Get all users
 export const getAllUsers = async (req, res) => {
     try {
         const users = await User.find().select("-password"); // exclude password
@@ -9,3 +16,5 @@ export const getAllUsers = async (req, res) => {
         res.status(500).json({ message: "Failed to fetch users" });
     }
 };
+
+// ===========================================================================================

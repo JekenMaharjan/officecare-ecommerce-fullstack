@@ -1,7 +1,15 @@
 import Order from "../models/order.js";
 import Cart from "../models/cart.js";
 
-// GET /api/orders
+// ==========================================================================
+
+// GET : Get all orders
+// POST : Create order
+// PATCH : Partially update orders' status
+
+// ==========================================================================
+
+// GET : /api/orders
 export const getAllOrders = async (req, res) => {
     try {
         const orders = await Order.find()
@@ -16,29 +24,7 @@ export const getAllOrders = async (req, res) => {
 
 // ==========================================================================
 
-// PUT /api/orders/:id
-export const updateOrderStatus = async (req, res) => {
-    try {
-        const { status } = req.body;
-
-        const order = await Order.findById(req.params.id);
-
-        if (!order) {
-            return res.status(404).json({ message: "Order not found" });
-        }
-
-        order.status = status;
-        await order.save();
-
-        res.status(200).json(order);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};          
-
-// ==========================================================================
-
-// POST /api/orders/createOrder
+// POST : /api/orders
 export const createOrder = async (req, res) => {
     try {
         const { fullName, phone, shippingAddress } = req.body;
@@ -84,3 +70,46 @@ export const createOrder = async (req, res) => {
 };
 
 // ==========================================================================
+
+// PATCH : /api/orders/:id
+export const updateOrderStatus = async (req, res) => {
+    try {
+        const { status } = req.body;
+
+        // Validate status exists
+        if (!status) {
+            return res.status(400).json({ message: "Status is required" });
+        }
+
+        // Allowed statuses
+        const allowedStatuses = [
+            "Pending",
+            "Processing",
+            "Shipped",
+            "Delivered",
+            "Cancelled"
+        ];
+
+        if (!allowedStatuses.includes(status)) {
+            return res.status(400).json({ message: "Invalid status value" });
+        }
+
+        const order = await Order.findById(req.params.id);
+
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        order.status = status;
+        await order.save();
+
+        res.status(200).json(order);
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};        
+
+// ==========================================================================
+
+

@@ -2,7 +2,17 @@ import Product from "../models/product.js";
 import path from "path";
 import fs from "fs";
 
-// Get all products
+// ===========================================================================================
+
+// GET: Get all products
+// GET: Get product by ID
+// POST: Create product
+// PUT: Update product
+// DELETE: Delete a product
+
+// ===========================================================================================
+
+// GET: Get all products
 export const getAllProducts = async (req, res) => {
     try {
         const products = await Product.find();
@@ -18,7 +28,9 @@ export const getAllProducts = async (req, res) => {
     }
 };
 
-// Get product by ID
+// ===========================================================================================
+
+// GET: Get product by ID
 export const getProductById = async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
@@ -35,7 +47,9 @@ export const getProductById = async (req, res) => {
     }
 };
 
-// Create product
+// ===========================================================================================
+
+// POST: Create product
 export const createProduct = async (req, res) => {
     try {
         const { name, description, price, stock } = req.body;
@@ -60,6 +74,34 @@ export const createProduct = async (req, res) => {
     }
 };
 
+// ===========================================================================================
+
+// PUT: Update product
+export const updateProduct = async (req, res) => {
+    try {
+        const { name, description, price, stock } = req.body;
+
+        const updateData = { name, description, price, stock };
+
+        if (req.file) {
+            updateData.image = req.file ? req.file.filename : null
+        }
+
+        const product = await Product.findByIdAndUpdate(
+            req.params.id,
+            updateData,
+            { returnDocument: "after" } // modern mongoose
+        );
+
+        res.json(product);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// ===========================================================================================
+
+// DELETE: Delete a product
 export const deleteProduct = async (req, res) => {
     try {
         // Find the product first
@@ -91,25 +133,4 @@ export const deleteProduct = async (req, res) => {
     }
 };
 
-// Update product
-export const updateProduct = async (req, res) => {
-    try {
-        const { name, description, price, stock } = req.body;
-
-        const updateData = { name, description, price, stock };
-
-        if (req.file) {
-            updateData.image = req.file ? req.file.filename : null
-        }
-
-        const product = await Product.findByIdAndUpdate(
-            req.params.id,
-            updateData,
-            { returnDocument: "after" } // modern mongoose
-        );
-
-        res.json(product);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+// ===========================================================================================

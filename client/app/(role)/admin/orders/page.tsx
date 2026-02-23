@@ -39,8 +39,8 @@ type Order = {
 const AdminOrders = () => {
     const [orders, setOrders] = useState<Order[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
-    const [selectData, setSelectData] = useState("");
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [openOrderId, setOpenOrderId] = useState<string | null>(null);
+    const [selectedStatus, setSelectedStatus] = useState<string>("");
 
     const API = process.env.NEXT_PUBLIC_API_URL;
 
@@ -50,7 +50,7 @@ const AdminOrders = () => {
 
     const fetchOrders = async () => {
         try {
-            const res = await axios.get(`${API}/api/orders/getAllOrders`, {
+            const res = await axios.get(`${API}/api/orders`, {
                 withCredentials: true,
             });
             setOrders(res.data);
@@ -61,8 +61,8 @@ const AdminOrders = () => {
 
     const updateStatus = async (id: string, status: string) => {
         try {
-            await axios.put(
-                `${API}/api/orders/updateOrderStatus/${id}`,
+            await axios.patch(
+                `${API}/api/orders/${id}`,
                 { status },
                 { withCredentials: true }
             );
@@ -87,6 +87,7 @@ const AdminOrders = () => {
         order.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         order.user.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
+    
     return (
         <div className="min-h-full w-full bg-gray-100/50 p-6 rounded-md">
             <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 text-center mb-6">
@@ -129,25 +130,33 @@ const AdminOrders = () => {
                                 </TableCell>
                                 <TableCell className="p-0 py-2 text-center flex flex-col font-medium">
                                     <p>{order.fullName}</p>
-                                    <p>{order.user.email}</p>
+                                    <p>{order?.user?.email}</p>
                                 </TableCell>
                                 <TableCell className="text-center p-0 py-2">{getTotalItems(order)}</TableCell>
                                 <TableCell className="text-center p-0 py-2">{order.totalAmount}</TableCell>
                                 <TableCell className="text-center p-0 py-2">{order.status}</TableCell>
                                 <TableCell className="text-center p-0 py-2">{formatDate(order.createdAt)}</TableCell>
                                 <TableCell className="text-center p-0 py-2">
-                                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                                        <DialogTrigger className="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded-md font-semibold text-white">Update</DialogTrigger>
+                                    <Dialog
+                                        open={openOrderId === order._id}
+                                        onOpenChange={(isOpen) => {
+                                            setOpenOrderId(isOpen ? order._id : null);
+                                            if (isOpen) setSelectedStatus(order.status); // set current order status when opening
+                                        }}
+                                    >
+                                        <DialogTrigger className="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded-md font-semibold text-white">
+                                            Update
+                                        </DialogTrigger>
+
                                         <DialogContent className="w-80">
                                             <DialogHeader>
                                                 <DialogTitle>Update Order Status</DialogTitle>
-                                                <DialogDescription>
-                                                    Select a new status for this order
-                                                </DialogDescription>
+                                                <DialogDescription>Select a new status for this order</DialogDescription>
+
                                                 <div className="flex justify-center mt-2">
                                                     <select
-                                                        value={selectData} // current status
-                                                        onChange={(e) => setSelectData(e.target.value)}
+                                                        value={selectedStatus}
+                                                        onChange={(e) => setSelectedStatus(e.target.value)}
                                                         className="w-full bg-white border border-gray-300 rounded-md px-2 py-1 text-sm hover:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                                     >
                                                         <option value="Pending">Pending</option>
@@ -158,13 +167,14 @@ const AdminOrders = () => {
                                                     </select>
                                                 </div>
                                             </DialogHeader>
+
                                             <Button
-                                                className="bg-green-500 hover:bg-green-600" 
+                                                className="bg-green-500 hover:bg-green-600 mt-4 w-full"
                                                 onClick={() => {
-                                                    updateStatus(order._id, selectData); // update the status
-                                                    setIsDialogOpen(false); // close the dialog
+                                                    updateStatus(order._id, selectedStatus); // call API
+                                                    setOpenOrderId(null); // close dialog
                                                 }}
-                                            > 
+                                            >
                                                 Save
                                             </Button>
                                         </DialogContent>

@@ -4,7 +4,14 @@ import jwt from 'jsonwebtoken'
 
 const saltRounds = 10
 
-// Register new users
+// ============================================================================================
+
+// POST: Register new users
+// POST: Signin User
+
+// ============================================================================================
+
+// POST: Register new users
 export const registerNewUser = async (req, res) => {
     try {
         const { email } = req.body;
@@ -19,16 +26,17 @@ export const registerNewUser = async (req, res) => {
         req.body.password = await bcrypt.hash(req.body.password, saltRounds)
 
         // Create the user in the db
-        await User.create(req.body)
-        return res.send('User Registered Successfully!!')
-
+        await User.create(req.body);
+        return res.send('User Registered Successfully!!');
     } catch (error) {
         console.error("Registration error:", error);
         return res.status(500).send('Registration failed. Please try again later.');
     }
 };
 
-// Signin 
+// ============================================================================================
+
+// POST: Signin User
 export const signinUser = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -52,7 +60,7 @@ export const signinUser = async (req, res) => {
             sameSite: "lax", // better than "strict" for local dev
             maxAge: 24 * 60 * 60 * 1000,
         });
-
+        
         return res.json({
             message: "Logged in successfully!",
             user: { email: user.email, role: user.role },
@@ -63,3 +71,5 @@ export const signinUser = async (req, res) => {
         return res.status(500).json({ message: "SignIn failed. Try again later." });
     }
 };
+
+// ============================================================================================

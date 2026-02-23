@@ -28,21 +28,28 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// Product routes
+// =================================================================================================
 
-// CREATE product → admin only
-productRouter.post('/', authMiddleware, authorize("admin"), upload.single('image'), createProduct);
+// Protect all order routes
+productRouter.use(authMiddleware);
 
-// READ all products → admin + customer
+// =================================================================================================
+
+// PRODUCT ROUTES
+
+// GET: Get all products -> admin + customer
 productRouter.get('/', authMiddleware, authorize("admin", "customer"), getAllProducts);
 
-// READ single product → admin + customer
+// GET: Get single product -> admin + customer
 productRouter.get('/:id', authMiddleware, authorize("admin", "customer"), getProductById);
 
-// DELETE product → admin only
-productRouter.delete('/:id', authMiddleware, authorize("admin"), deleteProduct);
+// POST: Create product -> admin only
+productRouter.post('/', authMiddleware, authorize("admin"), upload.single('image'), createProduct);
 
-// UPDATE product → admin only
+// PUT: Update product -> admin only
 productRouter.put('/:id', authMiddleware, authorize("admin"), upload.single('image'), updateProduct);
+
+// DELETE: Delete product -> admin only
+productRouter.delete('/:id', authMiddleware, authorize("admin"), deleteProduct);
 
 export default productRouter;
