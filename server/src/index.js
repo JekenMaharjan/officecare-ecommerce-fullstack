@@ -39,10 +39,15 @@ startServer();
 
 // ================================================================================
 
+const allowedOrigins = [
+    "http://localhost:3000",
+    process.env.CLIENT_URL
+];
+
 // Middleware
 app.use(
     cors({
-        origin: "http://localhost:3000",
+        origin: allowedOrigins,
         credentials: true,
     })
 );
