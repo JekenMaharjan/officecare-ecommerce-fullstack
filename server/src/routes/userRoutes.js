@@ -4,12 +4,16 @@ import { getAllUsers } from '../controllers/userController.js';
 
 const userRouter = express.Router();
 
-// Route for authenticated users
+// =================================================================================================
+
+// USER ROUTES
+
+// GET: Route for authenticated users
 userRouter.get("/profile", authMiddleware, (req, res) => {
     res.json({ message: "Profile data", user: req.user });
 });
 
-// Route for admin only
+// GET: Route for admin only
 userRouter.get("/all-users", authMiddleware, adminMiddleware, getAllUsers);
 
 export default userRouter;

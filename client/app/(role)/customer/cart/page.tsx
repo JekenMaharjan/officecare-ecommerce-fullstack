@@ -30,6 +30,7 @@ const CustomerCart = () => {
     const [phone, setPhone] = useState("");
     const [address, setAddress] = useState("");
     const [placingOrder, setPlacingOrder] = useState(false);
+    const [open, setOpen] = useState(false);
 
     const [cartItems, setCartItems] = useState<Product[]>([]);
     const [cartCount, setCartCount] = useState(0);
@@ -168,7 +169,7 @@ const CustomerCart = () => {
             setPlacingOrder(true);
 
             await axios.post(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/orders/createOrder`,
+                `${process.env.NEXT_PUBLIC_API_URL}/api/orders`,
                 {
                     fullName: fullName.trim(),
                     phone: phone.trim(),
@@ -186,6 +187,8 @@ const CustomerCart = () => {
 
             await fetchCartItems();
             await fetchCartCount();
+
+            setOpen(false);
 
         } catch (error: any) {
             toast.error(
@@ -259,7 +262,7 @@ const CustomerCart = () => {
 
             {/* Checkout Cart */}
             <div className="mt-8 flex justify-end">
-                <Dialog>
+                <Dialog open={open} onOpenChange={setOpen}>
                     <DialogTrigger asChild>
                         <Button
                             disabled={cartItems.length === 0}

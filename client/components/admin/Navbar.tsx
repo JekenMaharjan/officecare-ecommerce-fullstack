@@ -76,10 +76,10 @@ export default function Navbar() {
 
                     <Link
                         className="block font-semibold text-lg hover:text-blue-400"
-                        href="/admin/cart"
+                        href="/admin/orders"
                         onClick={() => setMenuOpen(false)}
                     >
-                        Cart
+                        Orders
                     </Link>
 
                     <Button
