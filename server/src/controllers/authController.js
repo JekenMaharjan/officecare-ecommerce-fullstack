@@ -4,6 +4,8 @@ import jwt from "jsonwebtoken";
 
 const saltRounds = 10;
 
+const JWT_SECRET = process.env.JWT_SECRET;
+
 // ============================================================================
 // REGISTER USER
 // ============================================================================
@@ -56,63 +58,36 @@ export const registerNewUser = async (req, res) => {
 // ============================================================================
 // SIGNIN USER
 // ============================================================================
-export const signinUser = async (req, res) => {
+export const signin = async (req, res) => {
+    const { email, password } = req.body;
+
     try {
-        const { email, password } = req.body;
-
-        // 1️. Validate input
-        if (!email || !password) {
-            return res.status(400).json({
-                message: "Email and password are required.",
-            });
-        }
-
-        // 2️. Check if user exists
         const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(400).json({
-                message: "Invalid email or password.",
-            });
-        }
+        if (!user) return res.status(404).json({ message: "User not found" });
 
-        // 3️. Compare passwords
-        const isMatched = await bcrypt.compare(password, user.password);
-        if (!isMatched) {
-            return res.status(400).json({
-                message: "Invalid email or password.",
-            });
-        }
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) return res.status(400).json({ message: "Invalid password" });
 
-        // 4️. Generate JWT token
+        // Create JWT token
         const token = jwt.sign(
             { id: user._id, role: user.role },
-            process.env.JWT_SECRET,
+            JWT_SECRET,
             { expiresIn: "1d" }
         );
 
-        // 5️. Send cookie (secure in production)
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "none", // important for frontend + backend on different domains
-            maxAge: 24 * 60 * 60 * 1000,
-        });
-
-        return res.status(200).json({
-            message: "Logged in successfully.",
+        // Send token and user info
+        res.status(200).json({
+            token,  // make sure this exists
             user: {
                 id: user._id,
                 name: user.name,
                 email: user.email,
                 role: user.role,
             },
-            isLoggedIn: true,
         });
 
     } catch (error) {
-        console.error("Signin error:", error);
-        return res.status(500).json({
-            message: "Signin failed. Please try again later.",
-        });
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
     }
 };
