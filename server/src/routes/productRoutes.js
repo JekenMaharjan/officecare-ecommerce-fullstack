@@ -38,18 +38,18 @@ productRouter.use(authMiddleware);
 // PRODUCT ROUTES
 
 // GET: Get all products -> admin + customer
-productRouter.get('/', authMiddleware, authorize("admin", "customer"), getAllProducts);
+productRouter.get('/', authorize("admin", "customer"), getAllProducts);
 
 // GET: Get single product -> admin + customer
-productRouter.get('/:id', authMiddleware, authorize("admin", "customer"), getProductById);
+productRouter.get('/:id', authorize("admin", "customer"), getProductById);
 
 // POST: Create product -> admin only
-productRouter.post('/', authMiddleware, authorize("admin"), upload.single('image'), createProduct);
+productRouter.post('/', authorize("admin"), upload.single('image'), createProduct);
 
 // PUT: Update product -> admin only
-productRouter.put('/:id', authMiddleware, authorize("admin"), upload.single('image'), updateProduct);
+productRouter.put('/:id', authorize("admin"), upload.single('image'), updateProduct);
 
 // DELETE: Delete product -> admin only
-productRouter.delete('/:id', authMiddleware, authorize("admin"), deleteProduct);
+productRouter.delete('/:id', authorize("admin"), deleteProduct);
 
 export default productRouter;
