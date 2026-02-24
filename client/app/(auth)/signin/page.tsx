@@ -30,14 +30,23 @@ const SignIn = () => {
             try {
                 const res = await axios.post(
                     process.env.NEXT_PUBLIC_API_URL + "/api/auth/signin",
-                    values, 
+                    values,
                     { withCredentials: true }
                 );
-                
-                const { token, user } = res.data;
-                // localStorage.setItem("token", token);
-                localStorage.setItem("role", user.role);
 
+                const { token, user } = res.data;
+
+                if (!token) {
+                    toast.error("Token not received from server");
+                    return;
+                }
+
+                // Store token and user info
+                localStorage.setItem("token", token);
+                localStorage.setItem("role", user.role);
+                localStorage.setItem("user", JSON.stringify(user));
+
+                // Redirect based on role
                 if (user.role === "admin") {
                     router.push("/admin/products");
                     toast.success("Admin SignIn Successfully !!");
