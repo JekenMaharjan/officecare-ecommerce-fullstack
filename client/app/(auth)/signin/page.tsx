@@ -21,6 +21,7 @@ const validationSchema = Yup.object({
 });
 
 const SignIn = () => {
+    const API = process.env.NEXT_PUBLIC_API_URL;
     const router = useRouter();
 
     const formik = useFormik({
@@ -29,7 +30,7 @@ const SignIn = () => {
         onSubmit: async (values) => {
             try {
                 const res = await axios.post(
-                    process.env.NEXT_PUBLIC_API_URL + "/api/auth/signin",
+                    `${API}/api/auth/signin`,
                     values,
                     { withCredentials: true }
                 );
