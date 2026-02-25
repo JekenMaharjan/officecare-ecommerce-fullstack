@@ -46,7 +46,19 @@ const CustomerCart = () => {
     // Fetch all cart items
     const fetchCartItems = async () => {
         try {
-            const { data } = await axios.get(`${API}/api/cart/items`, { withCredentials: true });
+            const token = localStorage.getItem("token");
+            if (!token) {
+                toast.error("Please login again");
+                return;
+            }
+
+            const { data } = await axios.get(`${API}/api/cart/items`,
+                { 
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
             const itemsArray = data?.items || [];
             const items = itemsArray.map((item: any) => ({
                 _id: item.product._id,
@@ -67,7 +79,19 @@ const CustomerCart = () => {
     // Fetch count of cart
     const fetchCartCount = async () => {
         try {
-            const { data } = await axios.get(`${API}/api/cart/count`, { withCredentials: true });
+            const token = localStorage.getItem("token");
+            if (!token) {
+                toast.error("Please login again");
+                return;
+            }
+
+            const { data } = await axios.get(`${API}/api/cart/count`, 
+                { 
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
             setCartCount(data.count);
         } catch {
             setCartCount(0);
@@ -77,10 +101,18 @@ const CustomerCart = () => {
     // Remove ALL quantity of a product from cart
     const handleRemoveFromCart = async (productId: string, quantity: number) => {
         try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                toast.error("Please login again");
+                return;
+            }
+
             setRemovingId(productId);
             await axios.delete(`${API}/api/cart`, {
                 data: { productId, quantity },
-                withCredentials: true
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
             });
 
             // Update UI
@@ -98,10 +130,20 @@ const CustomerCart = () => {
     // Remove just 1 quantity of a product
     const handleDecreaseOne = async (productId: string) => {
         try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                toast.error("Please login again");
+                return;
+            }
+
             await axios.patch(
                 `${API}/api/cart/quantity`,
                 { productId, action: "decrease" },
-                { withCredentials: true }
+                { 
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
             );
 
             setCartItems(prev =>
@@ -124,12 +166,22 @@ const CustomerCart = () => {
     // Add just 1 quantity of a product
     const handleAddOne = async (productId: string) => {
         try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                toast.error("Please login again");
+                return;
+            }
+
             setRemovingId(productId);
 
             await axios.patch(
                 `${API}/api/cart/quantity`,
                 { productId, action: "increase" },
-                { withCredentials: true }
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                },
+                }
             );
 
             setCartItems(prev =>
@@ -168,6 +220,12 @@ const CustomerCart = () => {
         }
 
         try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                toast.error("Please login again");
+                return;
+            }
+            
             setPlacingOrder(true);
 
             await axios.post(
@@ -177,7 +235,11 @@ const CustomerCart = () => {
                     phone: phone.trim(),
                     shippingAddress: address.trim(),
                 },
-                { withCredentials: true }
+                { 
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
             );
 
             toast.success("Order placed successfully!");

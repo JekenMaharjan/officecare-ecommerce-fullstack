@@ -171,7 +171,7 @@ const UpdateProductPage = () => {
                                         name="productName"
                                         onChange={(e) => setName(e.target.value)}
                                         placeholder="Product Name"
-                                        className="text-gray-500 border-gray-500"
+                                        className="text-gray-500 border-gray-400"
                                         required
                                     />
                                 </span>
@@ -185,7 +185,7 @@ const UpdateProductPage = () => {
                                         name="productStock"
                                         onChange={(e) => setStock(e.target.value)}
                                         placeholder="Stock"
-                                        className="text-gray-500 border-gray-500"
+                                        className="text-gray-500 border-gray-400"
                                         required
                                     />
                                 </span>
@@ -200,7 +200,7 @@ const UpdateProductPage = () => {
                                         value={description}
                                         onChange={(e) => setDescription(e.target.value)}
                                         placeholder="Description"
-                                        className="text-gray-500 border-gray-500 min-h-[110px]"
+                                        className="text-gray-500 border-gray-400 min-h-[110px]"
                                         required
                                     />
                                 </span>
@@ -213,7 +213,7 @@ const UpdateProductPage = () => {
                                             value={price}
                                             id="productPrice"
                                             name="productPrice"
-                                            className="text-gray-500 border-gray-500"
+                                            className="text-gray-500 border-gray-400"
                                             onChange={(e) => setPrice(e.target.value)}
                                             placeholder="Price"
                                             required
@@ -226,7 +226,7 @@ const UpdateProductPage = () => {
                                             type="file"
                                             id="productImage"
                                             name="productImage"
-                                            className="border-gray-500"
+                                            className="border-gray-400"
                                             accept="image/*"
                                             onChange={(e) => {
                                                 const file = e.target.files?.[0];

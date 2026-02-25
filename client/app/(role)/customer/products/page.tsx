@@ -39,11 +39,22 @@ const CustomerProducts = () => {
         setFilteredProducts(filtered);
     }, [searchTerm, products]);
 
+    // GET: Get all products
     const getAllProducts = async () => {
         try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                toast.error("Please login again");
+                return;
+            }
+
             const { data } = await axios.get(
                 `${API}/api/products`,
-                { withCredentials: true }
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
             );
             setProducts(data);
             setFilteredProducts(data);
@@ -52,10 +63,21 @@ const CustomerProducts = () => {
         }
     };
 
+    // GET: Get cart count
     const fetchCartCount = async () => {
         try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                toast.error("Please login again");
+                return;
+            }
+
             const { data } = await axios.get(`${API}/api/cart/count`,
-                { withCredentials: true }
+                { 
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
             );
             
             setCartCount(data.count);
@@ -65,15 +87,26 @@ const CustomerProducts = () => {
         }
     };
 
+    // POST: Add to cart
     const handleAddToCart = async (productId: string) => {
         try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                toast.error("Please login again");
+                return;
+            }
+            
             setAddingToCartId(productId);
             setCartCount(prev => prev + 1); // update immediately
 
             const { data } = await axios.post(
                 `${API}/api/cart`,
                 { productId, quantity: 1 },
-                { withCredentials: true }
+                { 
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
             );
 
             // Update product stock in UI
@@ -94,6 +127,7 @@ const CustomerProducts = () => {
         }
     };
 
+    // Handle product search
     const handleSearch = () => {
         const filtered = products.filter((product) =>
             product.name.toLowerCase().includes(searchTerm.toLowerCase())

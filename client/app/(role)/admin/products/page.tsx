@@ -219,7 +219,7 @@ const AdminProducts = () => {
                                             name="productName" 
                                             placeholder="Enter product name" 
                                             onChange={(e) => setName(e.target.value)}
-                                            className="rounded-lg" 
+                                            className="rounded-lg border-gray-400" 
                                         />
                                     </Field>
 
@@ -231,7 +231,7 @@ const AdminProducts = () => {
                                             name="productDescription" 
                                             placeholder="Enter product description" 
                                             onChange={(e) => setDescription(e.target.value)}
-                                            className="rounded-lg"
+                                            className="rounded-lg border-gray-400"
                                         />
                                     </Field>
 
@@ -243,7 +243,7 @@ const AdminProducts = () => {
                                             name="productPrice" 
                                             placeholder="Enter product price" 
                                             onChange={(e) => setPrice(e.target.value)}
-                                            className="rounded-lg"
+                                            className="rounded-lg border-gray-400"
                                         />
                                     </Field>
 
@@ -255,7 +255,7 @@ const AdminProducts = () => {
                                             name="productStock"
                                             placeholder="Enter product stock"
                                             onChange={(e) => setStock(e.target.value)}
-                                            className="rounded-lg"
+                                            className="rounded-lg border-gray-400"
                                         />
                                     </Field>
 
@@ -267,7 +267,7 @@ const AdminProducts = () => {
                                             name="productImage" 
                                             accept="image/*"
                                             onChange={(e) => e.target.files && setImage(e.target.files[0])}
-                                            className="rounded-lg"
+                                            className="rounded-lg border-gray-400"
                                         />
                                     </Field>
                                 </FieldGroup>
