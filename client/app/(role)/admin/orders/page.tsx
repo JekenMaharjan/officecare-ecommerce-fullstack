@@ -53,7 +53,6 @@ const AdminOrders = () => {
     const fetchOrders = async () => {
         try {
             const token = localStorage.getItem("token");
-
             if (!token) {
                 toast.error("Please login again");
                 return;
@@ -75,10 +74,20 @@ const AdminOrders = () => {
     // PATCH: Updates status of the order
     const updateStatus = async (id: string, status: string) => {
         try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                toast.error("Please login again");
+                return;
+            }
+
             await axios.patch(
                 `${API}/api/orders/${id}`,
                 { status },
-                { withCredentials: true }
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
             );
             fetchOrders();
         } catch (err) {
@@ -180,7 +189,6 @@ const AdminOrders = () => {
                                                         >
                                                             <option value="Pending">Pending</option>
                                                             <option value="Processing">Processing</option>
-                                                            <option value="Shipped">Shipped</option>
                                                             <option value="Delivered">Delivered</option>
                                                             <option value="Cancelled">Cancelled</option>
                                                         </select>
