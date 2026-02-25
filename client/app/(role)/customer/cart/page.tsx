@@ -36,6 +36,8 @@ const CustomerCart = () => {
     const [cartCount, setCartCount] = useState(0);
     const [removingId, setRemovingId] = useState<string | null>(null);
 
+    const API = process.env.NEXT_PUBLIC_API_URL;
+
     useEffect(() => {
         fetchCartItems();
         fetchCartCount();
@@ -44,7 +46,19 @@ const CustomerCart = () => {
     // Fetch all cart items
     const fetchCartItems = async () => {
         try {
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/cart/items`, { withCredentials: true });
+            const token = localStorage.getItem("token");
+            if (!token) {
+                toast.error("Please login again");
+                return;
+            }
+
+            const { data } = await axios.get(`${API}/api/cart/items`,
+                { 
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
             const itemsArray = data?.items || [];
             const items = itemsArray.map((item: any) => ({
                 _id: item.product._id,
@@ -65,7 +79,19 @@ const CustomerCart = () => {
     // Fetch count of cart
     const fetchCartCount = async () => {
         try {
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/cart/count`, { withCredentials: true });
+            const token = localStorage.getItem("token");
+            if (!token) {
+                toast.error("Please login again");
+                return;
+            }
+
+            const { data } = await axios.get(`${API}/api/cart/count`, 
+                { 
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
             setCartCount(data.count);
         } catch {
             setCartCount(0);
@@ -75,10 +101,18 @@ const CustomerCart = () => {
     // Remove ALL quantity of a product from cart
     const handleRemoveFromCart = async (productId: string, quantity: number) => {
         try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                toast.error("Please login again");
+                return;
+            }
+
             setRemovingId(productId);
-            await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/cart`, {
+            await axios.delete(`${API}/api/cart`, {
                 data: { productId, quantity },
-                withCredentials: true
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
             });
 
             // Update UI
@@ -96,10 +130,20 @@ const CustomerCart = () => {
     // Remove just 1 quantity of a product
     const handleDecreaseOne = async (productId: string) => {
         try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                toast.error("Please login again");
+                return;
+            }
+
             await axios.patch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/cart/quantity`,
+                `${API}/api/cart/quantity`,
                 { productId, action: "decrease" },
-                { withCredentials: true }
+                { 
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
             );
 
             setCartItems(prev =>
@@ -122,12 +166,22 @@ const CustomerCart = () => {
     // Add just 1 quantity of a product
     const handleAddOne = async (productId: string) => {
         try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                toast.error("Please login again");
+                return;
+            }
+
             setRemovingId(productId);
 
             await axios.patch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/cart/quantity`,
+                `${API}/api/cart/quantity`,
                 { productId, action: "increase" },
-                { withCredentials: true }
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                },
+                }
             );
 
             setCartItems(prev =>
@@ -166,16 +220,26 @@ const CustomerCart = () => {
         }
 
         try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                toast.error("Please login again");
+                return;
+            }
+            
             setPlacingOrder(true);
 
             await axios.post(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/orders`,
+                `${API}/api/orders`,
                 {
                     fullName: fullName.trim(),
                     phone: phone.trim(),
                     shippingAddress: address.trim(),
                 },
-                { withCredentials: true }
+                { 
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
             );
 
             toast.success("Order placed successfully!");
@@ -214,7 +278,7 @@ const CustomerCart = () => {
                             <CardContent className="flex justify-between items-center">
                                 <div className="relative w-40 h-40">
                                     <Image
-                                        src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${item.image}`}
+                                        src={`${API}/uploads/${item.image}`}
                                         alt={item.name}
                                         height={170}
                                         width={170}

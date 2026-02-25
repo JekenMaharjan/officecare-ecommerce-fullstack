@@ -40,6 +40,7 @@ type Product = {
 }
 
 const AdminProducts = () => {
+    const API = process.env.NEXT_PUBLIC_API_URL;
     const router = useRouter();
 
     const [products, setProducts] = useState<Product[]>([]);
@@ -64,18 +65,33 @@ const AdminProducts = () => {
         setFilteredProducts(filtered);
     }, [searchTerm, products]);
 
+    // GET: Get all products
     const getAllProducts = async () => {
         try {
+            const token = localStorage.getItem("token");
+
+            if (!token) {
+                toast.error("Please login again");
+                return;
+            }
+
             const response = await axios.get(
-                process.env.NEXT_PUBLIC_API_URL + "/api/products",
-                { withCredentials: true }
+                `${API}/api/products`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
             );
+
             setProducts(response.data);
+
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Something went wrong");
         }
-    }
+    };
 
+    // POST: Add product
     const addProduct = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -94,7 +110,7 @@ const AdminProducts = () => {
             }
 
             await axios.post(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/products`,
+                `${API}/api/products`,
                 formData,
                 {
                     withCredentials: true,  // this allows cookies, not headers
@@ -118,12 +134,13 @@ const AdminProducts = () => {
         }
     };
 
+    // DELETE: Delete product
     const handleDelete = async (id: string) => {
         try {
             const token = localStorage.getItem("token");
 
             await axios.delete(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/products/${id}`,
+                `${API}/api/products/${id}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -138,6 +155,7 @@ const AdminProducts = () => {
         }
     };
 
+    // Search box handling
     const handleSearch = () => {
         const filtered = products.filter((product) =>
             product.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -201,7 +219,7 @@ const AdminProducts = () => {
                                             name="productName" 
                                             placeholder="Enter product name" 
                                             onChange={(e) => setName(e.target.value)}
-                                            className="rounded-lg" 
+                                            className="rounded-lg border-gray-400" 
                                         />
                                     </Field>
 
@@ -213,7 +231,7 @@ const AdminProducts = () => {
                                             name="productDescription" 
                                             placeholder="Enter product description" 
                                             onChange={(e) => setDescription(e.target.value)}
-                                            className="rounded-lg"
+                                            className="rounded-lg border-gray-400"
                                         />
                                     </Field>
 
@@ -225,7 +243,7 @@ const AdminProducts = () => {
                                             name="productPrice" 
                                             placeholder="Enter product price" 
                                             onChange={(e) => setPrice(e.target.value)}
-                                            className="rounded-lg"
+                                            className="rounded-lg border-gray-400"
                                         />
                                     </Field>
 
@@ -237,7 +255,7 @@ const AdminProducts = () => {
                                             name="productStock"
                                             placeholder="Enter product stock"
                                             onChange={(e) => setStock(e.target.value)}
-                                            className="rounded-lg"
+                                            className="rounded-lg border-gray-400"
                                         />
                                     </Field>
 
@@ -249,7 +267,7 @@ const AdminProducts = () => {
                                             name="productImage" 
                                             accept="image/*"
                                             onChange={(e) => e.target.files && setImage(e.target.files[0])}
-                                            className="rounded-lg"
+                                            className="rounded-lg border-gray-400"
                                         />
                                     </Field>
                                 </FieldGroup>

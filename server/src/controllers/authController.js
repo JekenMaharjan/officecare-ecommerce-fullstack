@@ -4,15 +4,24 @@ import jwt from "jsonwebtoken";
 
 const saltRounds = 10;
 
+
+// ====================================================================================================
+// AUTH CONTROLLER
+// ====================================================================================================
+// POST: Register new user
+// POST: Login user
+// ====================================================================================================
+
+
 // ============================================================================
-// REGISTER USER
+// POST: Register new user
 // ============================================================================
 export const registerNewUser = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { fullName, email, password } = req.body;
 
         // 1️. Basic validation
-        if (!name || !email || !password) {
+        if (!fullName || !email || !password) {
             return res.status(400).json({
                 message: "All fields are required.",
             });
@@ -31,7 +40,7 @@ export const registerNewUser = async (req, res) => {
 
         // 4️. Create new user
         const newUser = await User.create({
-            name,
+            fullName,
             email,
             password: hashedPassword,
         });
@@ -40,7 +49,7 @@ export const registerNewUser = async (req, res) => {
             message: "User registered successfully.",
             user: {
                 id: newUser._id,
-                name: newUser.name,
+                fullName: newUser.fullName,
                 email: newUser.email,
             },
         });
@@ -54,7 +63,7 @@ export const registerNewUser = async (req, res) => {
 };
 
 // ============================================================================
-// SIGNIN USER
+// POST: Login user
 // ============================================================================
 export const signinUser = async (req, res) => {
     try {
@@ -103,7 +112,7 @@ export const signinUser = async (req, res) => {
             message: "Logged in successfully.",
             user: {
                 id: user._id,
-                name: user.name,
+                fullName: user.fullName,
                 email: user.email,
                 role: user.role,
             },

@@ -27,6 +27,7 @@ type Product = {
 };
 
 const UpdateProductPage = () => {
+    const API = process.env.NEXT_PUBLIC_API_URL;
     const router = useRouter();
 
     // This reads the dynamic part of your URL
@@ -50,9 +51,20 @@ const UpdateProductPage = () => {
     // Get products detail from db
     const getProduct = async () => {
         try {
+            const token = localStorage.getItem("token");
+
+            if (!token) {
+                toast.error("Please login again");
+                return;
+            }
+
             const { data } = await axios.get(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/products/${id}`,
-                { withCredentials: true }
+                `${API}/api/products/${id}`,
+                { 
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
             );
 
             setProduct(data);
@@ -64,7 +76,7 @@ const UpdateProductPage = () => {
             console.log(data.image);
             // Set preview directly from backend image path
             if (data.image) {
-                setPreview(`${process.env.NEXT_PUBLIC_API_URL}${data.image}`);
+                setPreview(`${API}${data.image}`);
             }
 
         } catch (error) {
@@ -78,6 +90,12 @@ const UpdateProductPage = () => {
         if (!id) return;
 
         try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                toast.error("Please login again");
+                return;
+            }
+
             const formData = new FormData();
             formData.append("name", name);
             formData.append("description", description);
@@ -85,12 +103,18 @@ const UpdateProductPage = () => {
             formData.append("stock", stock);
             if (image) formData.append("image", image);
 
-            await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/api/products/${id}`, formData);
+            await axios.put(`${API}/api/products/${id}`, formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data",
+                },
+            });
 
             toast.success("Product updated successfully !!");
             router.push("/admin/products");
         } catch (error: any) {
-            toast.error("Failed to update product !");
+            console.log(error.response?.data || error.message);
+            toast.error(error.response?.data?.message || "Failed to update product!");
         }
     };
 
@@ -109,9 +133,9 @@ const UpdateProductPage = () => {
                             {product?.image && (
                                 <div className="relative w-40 aspect-square">
                                     <Image
-                                        src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}`}
+                                        src={`${API}${product.image}`}
                                         alt={product.image}
-                                        className="object-contain w-auto h-auto transition-transform duration-300 group-hover:scale-120"
+                                        className="object-contain w-auto h-auto transition-transform duration-300 group-hover:scale-110"
                                         fill
                                         unoptimized
                                         loading="eager"
@@ -147,7 +171,7 @@ const UpdateProductPage = () => {
                                         name="productName"
                                         onChange={(e) => setName(e.target.value)}
                                         placeholder="Product Name"
-                                        className="text-gray-500 border-gray-500"
+                                        className="text-gray-500 border-gray-400"
                                         required
                                     />
                                 </span>
@@ -161,7 +185,7 @@ const UpdateProductPage = () => {
                                         name="productStock"
                                         onChange={(e) => setStock(e.target.value)}
                                         placeholder="Stock"
-                                        className="text-gray-500 border-gray-500"
+                                        className="text-gray-500 border-gray-400"
                                         required
                                     />
                                 </span>
@@ -176,7 +200,7 @@ const UpdateProductPage = () => {
                                         value={description}
                                         onChange={(e) => setDescription(e.target.value)}
                                         placeholder="Description"
-                                        className="text-gray-500 border-gray-500 min-h-[110px]"
+                                        className="text-gray-500 border-gray-400 min-h-[110px]"
                                         required
                                     />
                                 </span>
@@ -189,7 +213,7 @@ const UpdateProductPage = () => {
                                             value={price}
                                             id="productPrice"
                                             name="productPrice"
-                                            className="text-gray-500 border-gray-500"
+                                            className="text-gray-500 border-gray-400"
                                             onChange={(e) => setPrice(e.target.value)}
                                             placeholder="Price"
                                             required
@@ -202,7 +226,7 @@ const UpdateProductPage = () => {
                                             type="file"
                                             id="productImage"
                                             name="productImage"
-                                            className="border-gray-500"
+                                            className="border-gray-400"
                                             accept="image/*"
                                             onChange={(e) => {
                                                 const file = e.target.files?.[0];
@@ -223,7 +247,7 @@ const UpdateProductPage = () => {
                                         <img
                                             src={preview}
                                             alt="Preview"
-                                            className="object-contain w-auto h-auto transition-transform duration-300 group-hover:scale-120"
+                                            className="object-contain w-auto h-auto transition-transform duration-300 group-hover:scale-110"
                                             onError={() => setPreview(null)}
                                         />
                                     </div>

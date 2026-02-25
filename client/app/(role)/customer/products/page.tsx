@@ -24,6 +24,8 @@ const CustomerProducts = () => {
     const [addingToCartId, setAddingToCartId] = useState<string | null>(null);
     const [cartCount, setCartCount] = useState(0);
 
+    const API = process.env.NEXT_PUBLIC_API_URL;
+
     useEffect(() => {
         getAllProducts();
         fetchCartCount();
@@ -37,11 +39,22 @@ const CustomerProducts = () => {
         setFilteredProducts(filtered);
     }, [searchTerm, products]);
 
+    // GET: Get all products
     const getAllProducts = async () => {
         try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                toast.error("Please login again");
+                return;
+            }
+
             const { data } = await axios.get(
-                process.env.NEXT_PUBLIC_API_URL + "/api/products",
-                { withCredentials: true }
+                `${API}/api/products`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
             );
             setProducts(data);
             setFilteredProducts(data);
@@ -50,10 +63,21 @@ const CustomerProducts = () => {
         }
     };
 
+    // GET: Get cart count
     const fetchCartCount = async () => {
         try {
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/cart/count`,
-                { withCredentials: true }
+            const token = localStorage.getItem("token");
+            if (!token) {
+                toast.error("Please login again");
+                return;
+            }
+
+            const { data } = await axios.get(`${API}/api/cart/count`,
+                { 
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
             );
             
             setCartCount(data.count);
@@ -63,15 +87,26 @@ const CustomerProducts = () => {
         }
     };
 
+    // POST: Add to cart
     const handleAddToCart = async (productId: string) => {
         try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                toast.error("Please login again");
+                return;
+            }
+            
             setAddingToCartId(productId);
             setCartCount(prev => prev + 1); // update immediately
 
             const { data } = await axios.post(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/cart`,
+                `${API}/api/cart`,
                 { productId, quantity: 1 },
-                { withCredentials: true }
+                { 
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
             );
 
             // Update product stock in UI
@@ -92,6 +127,7 @@ const CustomerProducts = () => {
         }
     };
 
+    // Handle product search
     const handleSearch = () => {
         const filtered = products.filter((product) =>
             product.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -136,7 +172,7 @@ const CustomerProducts = () => {
                                 <div className="relative flex justify-center w-full h-52 overflow-hidden border-2 border-blue-400 rounded-md p-5">
                                     {product?.image ? (
                                         <Image
-                                            src={`${process.env.NEXT_PUBLIC_API_URL}${product.image}`}
+                                            src={`${API}${product.image}`}
                                             alt={product.name}
                                             height={170}
                                             width={170}

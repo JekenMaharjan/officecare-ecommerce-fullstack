@@ -8,12 +8,14 @@ import { useRouter } from "next/navigation";
 import { ShoppingCart, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 
 export default function Navbar() {
     const [cartCount, setCartCount] = useState(0);
     const [menuOpen, setMenuOpen] = useState(false);
 
     const router = useRouter();
+    const API = process.env.NEXT_PUBLIC_API_URL;
 
     useEffect(() => {
         // Call immediately on mount
@@ -28,11 +30,22 @@ export default function Navbar() {
         return () => clearInterval(interval);
     }, []); // empty dependency array so it runs once on mount
 
+    // GET: Get cart count
     const fetchCartCount = async () => {
         try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                toast.error("Please login again");
+                return;
+            }
+
             const { data } = await axios.get(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/cart/count`,
-                { withCredentials: true }
+                `${API}/api/cart/count`,
+                { 
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
             );
             setCartCount(data.count);
         } catch (err) {
