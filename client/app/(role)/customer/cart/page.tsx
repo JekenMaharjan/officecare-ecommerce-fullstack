@@ -14,6 +14,11 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import Footer from "@/components/layout/Footer";
+import { ShoppingCart, Menu, X } from "lucide-react";
+import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useRouter } from "next/navigation";
 
 type Product = {
     _id: string;
@@ -34,8 +39,10 @@ const CustomerCart = () => {
 
     const [cartItems, setCartItems] = useState<Product[]>([]);
     const [cartCount, setCartCount] = useState(0);
+    const [menuOpen, setMenuOpen] = useState(false);
     const [removingId, setRemovingId] = useState<string | null>(null);
 
+    const router = useRouter();
     const API = process.env.NEXT_PUBLIC_API_URL;
 
     useEffect(() => {
@@ -271,141 +278,261 @@ const CustomerCart = () => {
 // ======================================================================================================================
 
     return (
-        <div className="min-h-full w-6xl bg-gray-100/50 p-6 rounded-md mx-auto">
-            <h1 className="text-4xl font-bold text-center mb-6">Your Cart</h1>
+        <div className="min-h-screen max-w-screen flex flex-col overflow-hidden">
+            {/* <Toaster position="bottom-right" richColors /> */}
 
-            {cartItems.length === 0 ? (
-                <p className="text-center text-gray-700">Your cart is empty!</p>
-            ) : (
-                <div className="flex flex-col gap-5">
-                    {cartItems.map(item => (
-                        <Card key={item._id} className="p-5">
-                            <CardContent className="flex justify-between items-center">
-                                <div className="relative w-40 h-40">
-                                    <Image
-                                        src={`${API}/uploads/${item.image}`}
-                                        alt={item.name}
-                                        height={170}
-                                        width={170}
-                                        unoptimized
-                                        loading="eager"
-                                        className="object-contain w-auto h-auto"
+            {/* ====================================================================================================================== */}
+
+            {/* Customer Navbar */}
+            <nav className="bg-gray-900 text-white">
+                <div className="max-w-6xl mx-auto flex items-center justify-between p-2">
+                    {/* Logo */}
+                    <div className="flex items-center gap-5">
+                        <Image
+                            src="/OfficeCareLogo.png"
+                            alt="OfficeCare Logo"
+                            width={90}
+                            height={90}
+                            loading="eager"
+                        />
+                        <p className="text-2xl md:text-3xl font-bold text-blue-500">OFFICE CARE</p>
+                    </div>
+
+                    {/* Desktop Links */}
+                    <div className="hidden md:flex gap-6 items-center">
+                        <Link className="font-semibold text-lg hover:text-blue-400" href="/customer/products">
+                            Products
+                        </Link>
+
+                        <Link href="/customer/cart" className="relative inline-flex items-center justify-center">
+                            <ShoppingCart className="w-6 h-6" />
+                            {cartCount > 0 && (
+                                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+                                    {cartCount}
+                                </span>
+                            )}
+                        </Link>
+
+                        <Button
+                            onClick={() => {
+                                localStorage.removeItem("token");
+                                router.push("/signin");
+                            }}
+                            className="bg-red-500 text-white hover:bg-red-600 border-none"
+                        >
+                            Logout
+                        </Button>
+
+                        <Avatar>
+                            <AvatarImage src="https://github.com/shadcn.png" />
+                            <AvatarFallback>CN</AvatarFallback>
+                        </Avatar>
+                    </div>
+
+                    {/* Mobile Hamburger */}
+                    <div className="md:hidden flex items-center">
+                        <button
+                            onClick={() => setMenuOpen(!menuOpen)}
+                            className="text-white focus:outline-none"
+                        >
+                            {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                        </button>
+                    </div>
+                </div>
+
+                {/* Mobile Menu */}
+                {menuOpen && (
+                    <div className="md:hidden bg-gray-800 px-5 py-4 space-y-4">
+                        <Link
+                            className="block font-semibold text-lg hover:text-blue-400"
+                            href="/customer/products"
+                            onClick={() => setMenuOpen(false)}
+                        >
+                            Products
+                        </Link>
+
+                        <Link
+                            href="/customer/cart"
+                            className="relative inline-flex items-center justify-center"
+                            onClick={() => setMenuOpen(false)}
+                        >
+                            <ShoppingCart className="w-6 h-6 mr-2" />
+                            Cart
+                            {cartCount > 0 && (
+                                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+                                    {cartCount}
+                                </span>
+                            )}
+                        </Link>
+
+                        <Button
+                            onClick={() => {
+                                localStorage.removeItem("token");
+                                router.push("/signin");
+                                setMenuOpen(false);
+                            }}
+                            className="bg-red-500 text-white hover:bg-red-600 border-none w-full"
+                        >
+                            Logout
+                        </Button>
+
+                        <div className="flex items-center gap-3 mt-2">
+                            <Avatar>
+                                <AvatarImage src="https://github.com/shadcn.png" />
+                                <AvatarFallback>CN</AvatarFallback>
+                            </Avatar>
+                            <span>User</span>
+                        </div>
+                    </div>
+                )}
+            </nav>
+
+            {/* ====================================================================================================================== */}
+
+            {/* Main Container */}
+            <main className="flex-1 overflow-auto bg-gradient-to-br from-blue-500 to-purple-500 flex p-10 justify-center w-screen">
+                <div className="min-h-full w-6xl bg-gray-100/50 p-6 rounded-md mx-auto">
+                    <h1 className="text-4xl font-bold text-center mb-6">Your Cart</h1>
+
+                    {cartItems.length === 0 ? (
+                        <p className="text-center text-gray-700">Your cart is empty!</p>
+                    ) : (
+                        <div className="flex flex-col gap-5">
+                            {cartItems.map(item => (
+                                <Card key={item._id} className="p-5">
+                                    <CardContent className="flex justify-between items-center">
+                                        <div className="relative w-40 h-40">
+                                            <Image
+                                                src={`${API}/uploads/${item.image}`}
+                                                alt={item.name}
+                                                height={170}
+                                                width={170}
+                                                unoptimized
+                                                loading="eager"
+                                                className="object-contain w-auto h-auto"
+                                            />
+                                        </div>
+
+                                        <div className="flex flex-col gap-2 lg:w-sm sm:w-20">
+                                            <CardTitle className="text-xl font-semibold">{item.name}</CardTitle>
+                                            <CardDescription className="text-sm text-gray-600 line-clamp-2">{item.description}</CardDescription>
+                                        </div>
+
+                                        <p className="font-semibold text-center text-blue-600 w-25">Rs. {item.price.toLocaleString("en-IN")}</p>
+
+                                        <div className="w-30 text-center">
+                                            <p className="font-semibold">Quantity: {item.quantityInCart}</p>
+                                            <p className="text-sm mt-2"><strong>Total:</strong> Rs. {(item.quantityInCart * item.price).toLocaleString("en-IN")}</p>
+                                        </div>
+
+                                        <div className="flex flex-col gap-3">
+                                            <div className="flex justify-between">
+                                                <Button onClick={() => handleAddOne(item._id)} className="w-17 text-xl bg-green-500 hover:bg-green-600">
+                                                    +
+                                                </Button>
+                                                <Button onClick={() => handleDecreaseOne(item._id)} className="w-17 text-xl bg-red-500 hover:bg-red-600">
+                                                    -
+                                                </Button>
+                                            </div>
+
+                                            <Button
+                                                onClick={() => handleRemoveFromCart(item._id, item.quantityInCart)}
+                                                disabled={removingId === item._id}
+                                                className="bg-red-500 hover:bg-red-600"
+                                            >
+                                                {removingId === item._id ? "Removing..." : "Remove from Cart"}
+                                            </Button>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Checkout Cart */}
+                    <div className="mt-8 flex justify-end">
+                        <Dialog open={open} onOpenChange={setOpen}>
+                            <DialogTrigger asChild>
+                                <Button
+                                    disabled={cartItems.length === 0}
+                                    className="bg-yellow-500 hover:bg-yellow-600 px-8"
+                                >
+                                    Proceed to Checkout
+                                </Button>
+                            </DialogTrigger>
+
+                            <DialogContent className="max-w-lg">
+                                <DialogHeader>
+                                    <DialogTitle>Checkout</DialogTitle>
+                                    <DialogDescription>
+                                        Please confirm your order details.
+                                    </DialogDescription>
+                                </DialogHeader>
+
+                                {/* Order Summary */}
+                                <div className="space-y-3 mt-4">
+                                    {cartItems.map(item => (
+                                        <div key={item._id} className="flex justify-between text-sm">
+                                            <span className="w-xs">{item.name} (x{item.quantityInCart})</span>
+                                            <span>Rs. {(item.price * item.quantityInCart).toLocaleString("en-IN")}</span>
+                                        </div>
+                                    ))}
+
+                                    <div className="border-t pt-3 flex justify-between font-semibold">
+                                        <span>Total</span>
+                                        <span>Rs. {totalAmount.toLocaleString("en-IN")}</span>
+                                    </div>
+                                </div>
+
+                                {/* Shipping Form */}
+                                <div className="mt-6 space-y-3">
+                                    <input
+                                        type="text"
+                                        placeholder="Full Name"
+                                        value={fullName}
+                                        onChange={(e) => setFullName(e.target.value)}
+                                        className="w-full border rounded p-2"
+                                    />
+
+                                    <input
+                                        type="text"
+                                        placeholder="Phone Number"
+                                        value={phone}
+                                        onChange={(e) => setPhone(e.target.value)}
+                                        className="w-full border rounded p-2"
+                                    />
+
+                                    <textarea
+                                        placeholder="Delivery Address"
+                                        value={address}
+                                        onChange={(e) => setAddress(e.target.value)}
+                                        className="w-full border rounded p-2"
                                     />
                                 </div>
 
-                                <div className="flex flex-col gap-2 lg:w-sm sm:w-20">
-                                    <CardTitle className="text-xl font-semibold">{item.name}</CardTitle>
-                                    <CardDescription className="text-sm text-gray-600 line-clamp-2">{item.description}</CardDescription>
-                                </div>
+                                {/* Confirm Button */}
+                                <Button
+                                    type="button"
+                                    className="w-full mt-6 bg-green-600 hover:bg-green-700"
+                                    onClick={handlePlaceOrder}
+                                    disabled={placingOrder}
+                                >
+                                    {placingOrder ? "Placing Order..." : "Confirm Order"}
+                                </Button>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
 
-                                <p className="font-semibold text-center text-blue-600 w-25">Rs. {item.price.toLocaleString("en-IN")}</p>
-
-                                <div className="w-30 text-center">
-                                    <p className="font-semibold">Quantity: {item.quantityInCart}</p>
-                                    <p className="text-sm mt-2"><strong>Total:</strong> Rs. {(item.quantityInCart * item.price).toLocaleString("en-IN")}</p>
-                                </div>
-
-                                <div className="flex flex-col gap-3">
-                                    <div className="flex justify-between">
-                                        <Button onClick={() => handleAddOne(item._id)} className="w-17 text-xl bg-green-500 hover:bg-green-600">
-                                            +
-                                        </Button>
-                                        <Button onClick={() => handleDecreaseOne(item._id)} className="w-17 text-xl bg-red-500 hover:bg-red-600">
-                                            -
-                                        </Button>
-                                    </div>
-
-                                    <Button
-                                        onClick={() => handleRemoveFromCart(item._id, item.quantityInCart)}
-                                        disabled={removingId === item._id}
-                                        className="bg-red-500 hover:bg-red-600"
-                                    >
-                                        {removingId === item._id ? "Removing..." : "Remove from Cart"}
-                                    </Button>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    ))}
+                    <p className="mt-6 text-right font-semibold text-gray-800 text-md mr-2">
+                        Total Items: {cartCount}
+                    </p>
                 </div>
-            )}
+            </main>
 
-            {/* Checkout Cart */}
-            <div className="mt-8 flex justify-end">
-                <Dialog open={open} onOpenChange={setOpen}>
-                    <DialogTrigger asChild>
-                        <Button
-                            disabled={cartItems.length === 0}
-                            className="bg-yellow-500 hover:bg-yellow-600 px-8"
-                        >
-                            Proceed to Checkout
-                        </Button>
-                    </DialogTrigger>
+            {/* ====================================================================================================================== */}
 
-                    <DialogContent className="max-w-lg">
-                        <DialogHeader>
-                            <DialogTitle>Checkout</DialogTitle>
-                            <DialogDescription>
-                                Please confirm your order details.
-                            </DialogDescription>
-                        </DialogHeader>
-
-                        {/* Order Summary */}
-                        <div className="space-y-3 mt-4">
-                            {cartItems.map(item => (
-                                <div key={item._id} className="flex justify-between text-sm">
-                                    <span className="w-xs">{item.name} (x{item.quantityInCart})</span>
-                                    <span>Rs. {(item.price * item.quantityInCart).toLocaleString("en-IN")}</span>
-                                </div>
-                            ))}
-
-                            <div className="border-t pt-3 flex justify-between font-semibold">
-                                <span>Total</span>
-                                <span>Rs. {totalAmount.toLocaleString("en-IN")}</span>
-                            </div>
-                        </div>
-
-                        {/* Shipping Form */}
-                        <div className="mt-6 space-y-3">
-                            <input
-                                type="text"
-                                placeholder="Full Name"
-                                value={fullName}
-                                onChange={(e) => setFullName(e.target.value)}
-                                className="w-full border rounded p-2"
-                            />
-
-                            <input
-                                type="text"
-                                placeholder="Phone Number"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
-                                className="w-full border rounded p-2"
-                            />
-
-                            <textarea
-                                placeholder="Delivery Address"
-                                value={address}
-                                onChange={(e) => setAddress(e.target.value)}
-                                className="w-full border rounded p-2"
-                            />
-                        </div>
-
-                        {/* Confirm Button */}
-                        <Button
-                            type="button"
-                            className="w-full mt-6 bg-green-600 hover:bg-green-700"
-                            onClick={handlePlaceOrder}
-                            disabled={placingOrder}
-                        >
-                            {placingOrder ? "Placing Order..." : "Confirm Order"}
-                        </Button>
-                    </DialogContent>
-                </Dialog>
-            </div>
-
-            <p className="mt-6 text-right font-semibold text-gray-800 text-md mr-2">
-                Total Items: {cartCount}
-            </p>
+            {/* Customer Footer */}
+            <Footer />
         </div>
     );
 };

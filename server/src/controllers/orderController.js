@@ -38,7 +38,7 @@ export const createOrder = async (req, res) => {
         const { fullName, phone, shippingAddress } = req.body;
 
         // Basic validation
-        if (!fullName || !phone || !shippingAddress) {
+        if (!fullName.trim() || !phone.trim() || !shippingAddress.trim()) {
             return res.status(400).json({
                 message: "All shipping details are required"
             });
@@ -84,7 +84,7 @@ export const createOrder = async (req, res) => {
             status: "Pending"
         });
 
-        // Reduce stock
+        // // Reduce stock
         // for (let item of cart.items) {
         //     item.product.stock -= item.quantity;
         //     await item.product.save();
